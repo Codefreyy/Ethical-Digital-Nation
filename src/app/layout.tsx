@@ -23,7 +23,7 @@ export default function RootLayout({
         <body className="min-h-screen">
           <Navbar />
           <main
-            className={`${inter.className} container h-full max-w-7xl mx-auto`}
+            className={`${inter.className} container h-full max-w-7xl mx-auto mt-12`}
           >
             {children}
           </main>
