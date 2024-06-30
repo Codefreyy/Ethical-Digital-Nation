@@ -1,6 +1,7 @@
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
 import Link from "next/link"
 import { auth } from "@clerk/nextjs/server"
+import { Button } from "./ui/button"
 
 export const Navbar = () => {
   return (
@@ -9,7 +10,9 @@ export const Navbar = () => {
         Ethical Digital Nation
       </Link>
       <SignedOut>
-        <SignInButton />
+        <SignInButton>
+          <Button>Sign In</Button>
+        </SignInButton>
       </SignedOut>
       <SignedIn>
         <UserButton />
