@@ -22,7 +22,7 @@ export default function RootLayout({
       <html lang="en">
         <body className="min-h-screen">
           <Header />
-          <main className={`${inter.className} container h-full mx-auto mt-12`}>
+          <main className={`${inter.className}  h-full mx-auto mt-12`}>
             {children}
           </main>
         </body>

@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button"
 import { useMutation, useQuery } from "convex/react"
 import { api } from "../../convex/_generated/api"
 import toast, { Toaster } from "react-hot-toast"
+import { FileUp } from "lucide-react"
+import { FileUploader } from "@/components/FileUploader"
 
 export default function Home() {
   const createFile = useMutation(api.files.createFile)
@@ -23,11 +25,14 @@ export default function Home() {
 
   const files = useQuery(api.files.getFiles)
   return (
-    <main className="flex flex-col justify-between">
+    <main className="container mx-auto">
+      <div className="flex justify-between items-center">
+        <h4 className="text-2xl font-semibold">Your Files</h4>
+        <FileUploader />
+      </div>
       {files?.map((file) => {
         return <div key={file._id}>{file.name}</div>
       })}
-      <Button onClick={handleCreateFile}>Click me</Button>
       <Toaster />
     </main>
   )
