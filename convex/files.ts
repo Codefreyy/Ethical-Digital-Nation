@@ -6,13 +6,18 @@ export const createFile = mutation({
         name: v.string()
     },
     async handler(ctx, args) {
-        const identity = await ctx.auth.getUserIdentity()
-        if (!identity) {
-            throw new Error('not authenticated')
+        try {
+            const identity = await ctx.auth.getUserIdentity()
+            if (!identity) {
+                throw new Error('not authenticated')
+            }
+            await ctx.db.insert('files', {
+                name: args.name
+            })
+        } catch (err) {
+            throw new Error('failed to create file: ' + (err as Error).message)
         }
-        await ctx.db.insert('files', {
-            name: args.name
-        })
+
     }
 })
 
