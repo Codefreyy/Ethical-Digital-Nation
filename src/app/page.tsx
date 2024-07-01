@@ -1,11 +1,20 @@
-import { Button } from "@/components/ui/button"
-import { currentUser } from "@clerk/nextjs/server"
+"use client"
 
-export default async function Home() {
-  const user = await currentUser()
+import { Button } from "@/components/ui/button"
+import { useMutation } from "convex/react"
+import { api } from "../../convex/_generated/api"
+
+export default function Home() {
+  const createFile = useMutation(api.files.createFile)
   return (
     <main className="flex min-h-screen flex-col justify-between">
-      hello {user?.fullName || "guest"}!<Button>Hello</Button>
+      <Button
+        onClick={() => {
+          createFile({ name: "test" })
+        }}
+      >
+        Click me
+      </Button>
     </main>
   )
 }
