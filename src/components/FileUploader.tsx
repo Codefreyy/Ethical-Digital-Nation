@@ -3,8 +3,8 @@
 import { z } from "zod"
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { useMutation } from "convex/react"
+import { set, useForm } from "react-hook-form"
+import { useConvexAuth, useMutation } from "convex/react"
 
 import {
   Form,
@@ -90,10 +90,25 @@ export const FileUploader = () => {
       })
     }
   }
+
+  const { isAuthenticated } = useConvexAuth()
+
   return (
-    <Dialog open={isFileDialogOpen} onOpenChange={setIsFileDialogOpen}>
+    <Dialog open={isFileDialogOpen}>
       <DialogTrigger asChild>
-        <Button onClick={() => setIsFileDialogOpen(true)}>Upload File</Button>
+        {isAuthenticated && (
+          <Button
+            onClick={() => {
+              if (!isAuthenticated) {
+                return
+              }
+              console.log("isAuthenticated", isAuthenticated)
+              setIsFileDialogOpen(true)
+            }}
+          >
+            Upload File
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
