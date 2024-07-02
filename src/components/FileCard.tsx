@@ -1,4 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,17 +22,23 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { EllipsisVertical } from "lucide-react"
+import { DownloadIcon, EllipsisVertical } from "lucide-react"
 
 import { Trash2 } from "lucide-react"
 import { useState } from "react"
-import { useMutation } from "convex/react"
+import { useMutation, useQuery } from "convex/react"
 import { Doc } from "../../convex/_generated/dataModel"
 import { api } from "../../convex/_generated/api"
+import { useToast } from "./ui/use-toast"
 
 export const FileCardActions = ({ file }: { file: Doc<"files"> }) => {
   const deleteFile = useMutation(api.files.deleteFile)
   const [deleteAlertOpen, setDeleteAlertOpen] = useState(false)
+  const { toast } = useToast()
+  const fileUrl = useQuery(api.files.getFileUrl, {
+    fileId: file._id,
+  })
+
   return (
     <>
       <AlertDialog open={deleteAlertOpen} onOpenChange={setDeleteAlertOpen}>
@@ -42,11 +54,16 @@ export const FileCardActions = ({ file }: { file: Doc<"files"> }) => {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() =>
-                deleteFile({
+              onClick={async () => {
+                await deleteFile({
                   fileId: file._id,
                 })
-              }
+                toast({
+                  title: "File deleted",
+                  description: "The file has been deleted successfully.",
+                  duration: 2000,
+                })
+              }}
             >
               Continue
             </AlertDialogAction>
@@ -59,6 +76,16 @@ export const FileCardActions = ({ file }: { file: Doc<"files"> }) => {
           <EllipsisVertical className="w-4 h-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="center">
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={async () => {
+              if (fileUrl) {
+                window.open(fileUrl, "_blank")
+              }
+            }}
+          >
+            <DownloadIcon className="w-4 r-4 mr-1" /> DownLoad
+          </DropdownMenuItem>
           <DropdownMenuItem
             className=" text-red-500 cursor-pointer "
             onClick={() => setDeleteAlertOpen(true)}
@@ -75,7 +102,7 @@ export const FileCard = ({ file }: { file: Doc<"files"> }) => {
   return (
     <Card>
       <CardHeader className="relative">
-        <CardTitle>{file.title}</CardTitle>
+        <CardTitle className="text-xl">{file.title}</CardTitle>
         <div className="absolute top-2 right-2">
           <FileCardActions file={file} />
         </div>

@@ -26,6 +26,23 @@ export const uploadFile = mutation({
 
 })
 
+export const getFileUrl = query({
+    args: { fileId: v.id("files") },
+    async handler(ctx, args) {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) {
+            throw new Error('not authenticated');
+        }
+        const file = await ctx.db.get(args.fileId);
+        if (!file) {
+            throw new ConvexError('file not found');
+        }
+        const url = await ctx.storage.getUrl(file.file);
+        return url;
+    }
+});
+
+
 export const deleteFile = mutation({
     args: { fileId: v.id("files") },
     async handler(ctx, args) {
