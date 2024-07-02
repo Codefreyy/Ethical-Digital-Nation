@@ -1,8 +1,10 @@
 "use client"
 
-import { z } from "zod"
+import { set, z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
+import { useMutation } from "convex/react"
+import toast, { Toaster } from "react-hot-toast"
 
 import {
   Form,
@@ -25,6 +27,8 @@ import {
 
 import { Button } from "./ui/button"
 import { Textarea } from "./ui/textarea"
+import { api } from "../../convex/_generated/api"
+import { useState } from "react"
 
 const formSchema = z.object({
   title: z
@@ -38,6 +42,7 @@ const formSchema = z.object({
 })
 
 export const FileUploader = () => {
+  const [isFileDialogOpen, setIsFileDialogOpen] = useState(false)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,13 +51,46 @@ export const FileUploader = () => {
   })
 
   const fileRef = form.register("file")
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+  const generateUploadUrl = useMutation(api.files.generateUploadUrl)
+  const uploadFile = useMutation(api.files.uploadFile)
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const postUrl = await generateUploadUrl()
+      const res = await fetch(postUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": values.file[0].type,
+        },
+        body: values.file[0],
+      })
+
+      const { storageId } = await res.json()
+
+      await uploadFile({
+        title: values.title,
+        file: storageId,
+        description: values.description,
+      })
+
+      form.reset()
+      setIsFileDialogOpen(false)
+    } catch (err) {
+      const errorMessage = (err as Error).message
+      if (errorMessage.includes("not authenticated")) {
+        toast.error("You need to be authenticated to create a file", {
+          duration: 3000,
+          position: "bottom-right",
+        })
+      }
+    }
   }
   return (
-    <Dialog>
+    <Dialog open={isFileDialogOpen} onOpenChange={setIsFileDialogOpen}>
+      <Toaster />
+
       <DialogTrigger asChild>
-        <Button>Create File</Button>
+        <Button onClick={() => setIsFileDialogOpen(true)}>Upload File</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
