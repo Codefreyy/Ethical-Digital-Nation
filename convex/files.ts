@@ -1,4 +1,4 @@
-import { v } from 'convex/values'
+import { ConvexError, v } from 'convex/values'
 import { mutation, query } from './_generated/server'
 
 export const generateUploadUrl = mutation(async (ctx) => {
@@ -24,6 +24,22 @@ export const uploadFile = mutation({
         })
     }
 
+})
+
+export const deleteFile = mutation({
+    args: { fileId: v.id("files") },
+    async handler(ctx, args) {
+        const identity = await ctx.auth.getUserIdentity()
+        if (!identity) {
+            throw new Error('not authenticated')
+        }
+        const file = await ctx.db.get(args.fileId)
+        console.log('file?', file)
+        if (!file) {
+            throw new ConvexError('file not found')
+        }
+        await ctx.db.delete(args.fileId)
+    }
 })
 
 export const getFiles = query({
