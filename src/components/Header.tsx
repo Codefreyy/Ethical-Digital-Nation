@@ -9,14 +9,22 @@ export const Header = () => {
         <Link href="/" className="">
           Ethical Digital Nation
         </Link>
-        <SignedOut>
-          <SignInButton>
-            <Button>Sign In</Button>
-          </SignInButton>
-        </SignedOut>
-        <SignedIn>
-          <UserButton />
-        </SignedIn>
+        <div className="flex gap-8 items-center">
+          <Link href="/events" className="hover:underline">
+            Events
+          </Link>
+          <Link href="/files" className="hover:underline">
+            Files
+          </Link>
+          <SignedOut>
+            <SignInButton>
+              <Button>Sign In</Button>
+            </SignInButton>
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
+        </div>
       </div>
     </header>
   )

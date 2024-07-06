@@ -6,4 +6,10 @@ export default defineSchema({
     users: defineTable({
         tokenIdentifier: v.string(),
     }),
+    events: defineTable({
+        name: v.string(),
+        description: v.string(),
+        date: v.string(),
+        location: v.string(),
+    }),
 });

@@ -102,7 +102,7 @@ export const FileCard = ({ file }: { file: Doc<"files"> }) => {
   return (
     <Card>
       <CardHeader className="relative">
-        <CardTitle className="text-xl">{file.title}</CardTitle>
+        <CardTitle className="sm:text-xl text-md">{file.title}</CardTitle>
         <div className="absolute top-2 right-2">
           <FileCardActions file={file} />
         </div>

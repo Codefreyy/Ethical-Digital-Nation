@@ -24,7 +24,9 @@ export default function RootLayout({
         <body className="min-h-screen">
           <Toaster />
           <Header />
-          <main className={`${inter.className}  h-full mx-auto mt-12`}>
+          <main
+            className={`${inter.className}  h-full mx-auto mt-12 container`}
+          >
             {children}
           </main>
         </body>

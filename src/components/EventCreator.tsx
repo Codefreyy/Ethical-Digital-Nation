@@ -1,7 +1,7 @@
 "use client"
 
 import { z } from "zod"
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { set, useForm } from "react-hook-form"
 import { useConvexAuth, useMutation } from "convex/react"
@@ -26,91 +26,57 @@ import {
 } from "@/components/ui/dialog"
 
 import { Button } from "./ui/button"
+import { Loader2 } from "lucide-react"
 import { Textarea } from "./ui/textarea"
 import { api } from "../../convex/_generated/api"
-import { useToast } from "./ui/use-toast"
-import { Loader2 } from "lucide-react"
+import { toast } from "./ui/use-toast"
 
 const formSchema = z.object({
-  title: z
-    .string()
-    .min(1, { message: "Title is required" })
-    .max(50, { message: "Title is too long" }),
-  description: z.optional(z.string().min(2).max(200)),
-  file: z
-    .custom<FileList>((val) => val instanceof FileList, "Required a file")
-    .refine((files) => files.length > 0, "Required a file"),
+  name: z.string().min(1, { message: "Name is required" }),
+  description: z.string().min(2).max(200),
+  date: z.string(),
+  location: z.string(),
 })
 
-export const FileUploader = () => {
-  const { toast } = useToast()
-  const [isFileDialogOpen, setIsFileDialogOpen] = useState(false)
+export const EventCreator = () => {
+  const { isAuthenticated } = useConvexAuth()
+  const [isCreateEventOpen, setIsCreateEventOpen] = useState(false)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
+      name: "",
+      description: "",
+      date: "",
+      location: "",
     },
   })
-
-  const fileRef = form.register("file")
-  const generateUploadUrl = useMutation(api.files.generateUploadUrl)
-  const uploadFile = useMutation(api.files.uploadFile)
   const abortControllerRef = useRef<AbortController | null>(null)
+  const createEvent = useMutation(api.events.createEvent)
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(value: z.infer<typeof formSchema>) {
     try {
       abortControllerRef.current = new AbortController()
-      const signal = abortControllerRef.current.signal
-      const postUrl = await generateUploadUrl()
-      const res = await fetch(postUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": values.file[0].type,
-        },
-        body: values.file[0],
-        signal,
-      })
+      const { signal } = abortControllerRef.current
+      await createEvent(value)
 
-      const { storageId } = await res.json()
-
-      await uploadFile({
-        title: values.title,
-        file: storageId,
-        description: values.description,
-      })
       toast({
-        title: "Success",
-        description: "File uploaded successfully",
-        duration: 3000,
+        title: "Event created",
+        description: "The event has been created successfully.",
+        duration: 2000,
       })
       form.reset()
-      setIsFileDialogOpen(false)
-    } catch (err) {
-      const errorMessage = (err as Error).message
+      setIsCreateEventOpen(false)
+    } catch (error: any) {
       toast({
-        variant: "destructive",
-        description: errorMessage,
-        duration: 3000,
+        title: "Failed to create event",
+        description: error.message,
+        duration: 5000,
       })
-    } finally {
-      abortControllerRef.current = null
     }
   }
 
-  const { isAuthenticated } = useConvexAuth()
-
-  useEffect(() => {
-    console.log(abortControllerRef, abortControllerRef)
-    if (!isFileDialogOpen && abortControllerRef.current) {
-      console.log("dad")
-
-      abortControllerRef.current.abort()
-      abortControllerRef.current = null
-      
-    }
-  }, [isFileDialogOpen])
   return (
-    <Dialog open={isFileDialogOpen} onOpenChange={setIsFileDialogOpen}>
+    <Dialog open={isCreateEventOpen} onOpenChange={setIsCreateEventOpen}>
       <DialogTrigger asChild>
         {isAuthenticated && (
           <Button
@@ -119,18 +85,16 @@ export const FileUploader = () => {
                 return
               }
               console.log("isAuthenticated", isAuthenticated)
-              setIsFileDialogOpen(true)
+              setIsCreateEventOpen(true)
             }}
           >
-            Upload File
+            Create Event
           </Button>
         )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="mb-8 font-medium">
-            Upload your file here
-          </DialogTitle>
+          <DialogTitle className="mb-8 font-medium">Create event</DialogTitle>
           <DialogDescription>
             <Form {...form}>
               <form
@@ -139,10 +103,10 @@ export const FileUploader = () => {
               >
                 <FormField
                   control={form.control}
-                  name="title"
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>File title</FormLabel>
+                      <FormLabel>Event Name</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -157,7 +121,7 @@ export const FileUploader = () => {
                     <FormItem>
                       <FormLabel>Description (optional)</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Describe your file" {...field} />
+                        <Textarea placeholder="Describe the event" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -166,21 +130,31 @@ export const FileUploader = () => {
 
                 <FormField
                   control={form.control}
-                  name="file"
-                  render={() => (
+                  name="date"
+                  render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Select File</FormLabel>
+                      <FormLabel>Date</FormLabel>
                       <FormControl>
-                        <Input
-                          className="hover: cursor-pointer"
-                          type="file"
-                          {...fileRef}
-                        />
+                        <Input {...field} type="datetime-local" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="location"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Location</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <Button
                   type="submit"
                   disabled={form.formState.isSubmitting}
