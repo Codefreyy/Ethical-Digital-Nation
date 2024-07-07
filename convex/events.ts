@@ -1,5 +1,5 @@
 import { v } from "convex/values"
-import { internalMutation, mutation, query } from "./_generated/server"
+import { mutation, query } from "./_generated/server"
 
 export const createEvent = mutation({
     args: {
@@ -27,3 +27,13 @@ export const getEvents = query({
         return ctx.db.query('events').collect()
     }
 })
+
+export const getEvent = query({
+    args: {
+        id: v.id("events"),
+    },
+    async handler(ctx, args) {
+        return ctx.db.get(args.id)
+    }
+})
+

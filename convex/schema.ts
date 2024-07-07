@@ -7,9 +7,14 @@ export default defineSchema({
         tokenIdentifier: v.string(),
     }),
     events: defineTable({
+        _id: v.id('events'),
         name: v.string(),
         description: v.string(),
         date: v.string(),
         location: v.string(),
+    }),
+    event_participants: defineTable({
+        eventId: v.id('events'),
+        userId: v.id('users'),
     }),
 });

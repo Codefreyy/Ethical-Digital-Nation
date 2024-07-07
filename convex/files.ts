@@ -51,7 +51,6 @@ export const deleteFile = mutation({
             throw new Error('not authenticated')
         }
         const file = await ctx.db.get(args.fileId)
-        console.log('file?', file)
         if (!file) {
             throw new ConvexError('file not found')
         }
