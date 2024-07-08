@@ -4,7 +4,7 @@ import { z } from "zod"
 import { useRef, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { set, useForm } from "react-hook-form"
-import { useConvexAuth, useMutation } from "convex/react"
+import { useConvexAuth, useMutation, useQuery } from "convex/react"
 
 import {
   Form,
@@ -30,6 +30,7 @@ import { Loader2 } from "lucide-react"
 import { Textarea } from "./ui/textarea"
 import { api } from "../../convex/_generated/api"
 import { toast } from "./ui/use-toast"
+import { v } from "convex/values"
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -57,6 +58,7 @@ export const EventCreator = () => {
     try {
       abortControllerRef.current = new AbortController()
       const { signal } = abortControllerRef.current
+
       await createEvent(value)
 
       toast({
@@ -84,7 +86,6 @@ export const EventCreator = () => {
               if (!isAuthenticated) {
                 return
               }
-              console.log("isAuthenticated", isAuthenticated)
               setIsCreateEventOpen(true)
             }}
           >

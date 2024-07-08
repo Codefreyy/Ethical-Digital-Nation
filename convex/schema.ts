@@ -5,6 +5,8 @@ export default defineSchema({
     files: defineTable({ title: v.string(), description: v.optional(v.string()), file: v.id('_storage') }),
     users: defineTable({
         tokenIdentifier: v.string(),
+        name: v.optional(v.string()),
+        image: v.optional(v.any()),
     }),
     events: defineTable({
         _id: v.id('events'),
@@ -12,6 +14,7 @@ export default defineSchema({
         description: v.string(),
         date: v.string(),
         location: v.string(),
+        creatorId: v.string(),
     }),
     event_participants: defineTable({
         eventId: v.id('events'),
