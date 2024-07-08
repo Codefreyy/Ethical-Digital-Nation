@@ -16,7 +16,6 @@ import {
 import { Button } from "@/components/ui/button"
 import { Id } from "../../../../convex/_generated/dataModel"
 import { toast } from "@/components/ui/use-toast"
-import { getEventParticipants } from "../../../../convex/events"
 
 type EventPageProps = {
   params: {
@@ -53,6 +52,8 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
       <div className="text-center py-20 text-gray-500">No event found.</div>
     )
   }
+
+  console.log("event!!!!!!!!", event)
 
   const {
     event: { name, date, location, description },

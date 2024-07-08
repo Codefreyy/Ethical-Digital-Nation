@@ -36,45 +36,48 @@ export const getEventDetails = query({
     async handler(ctx, args) {
         const identity = await ctx.auth.getUserIdentity();
         console.log('identity12312', identity)
-        if (!identity) {
-            return { error: "not_authenticated" };
-        }
 
-        // 确认 tokenIdentifier 包含正确的前缀
-        const tokenIdentifier = identity.tokenIdentifier.startsWith("https://undefined|")
-            ? identity.tokenIdentifier
-            : `https://undefined|${identity.tokenIdentifier.split("|")[1]}`;
-
-        console.log('identity', tokenIdentifier, identity.tokenIdentifier)
-        const user = await ctx.db.query("users")
-            .filter(q => q.eq(q.field("tokenIdentifier"), tokenIdentifier))
-            .first();
-
-
-        if (!user) {
-            return { error: "user_not_found" };
-        }
 
         const event = await ctx.db.get(args.eventId);
         if (!event) {
             return { error: "event_not_found" };
         }
+        if (identity) {
+            // 确认 tokenIdentifier 包含正确的前缀
+            const tokenIdentifier = identity.tokenIdentifier.startsWith("https://undefined|")
+                ? identity.tokenIdentifier
+                : `https://undefined|${identity.tokenIdentifier.split("|")[1]}`;
 
-        const participants = await ctx.db.query("event_participants")
-            .filter(q => q.eq(q.field("eventId"), args.eventId))
-            .collect();
+            console.log('identity', tokenIdentifier, identity.tokenIdentifier)
+            const user = await ctx.db.query("users")
+                .filter(q => q.eq(q.field("tokenIdentifier"), tokenIdentifier))
+                .first();
 
-        const isCreator = event.creatorId.split("|")[1] === user.tokenIdentifier.split("|")[1];
-        console.log(event.creatorId.split("|")[1], user.tokenIdentifier.split("|")[1], 123123213213123213)
-        const hasJoined = participants.some((participant: any) => {
-            return participant.userId === user._id
-        });
+
+            if (!user) {
+                return { error: "user_not_found" };
+            }
+            const participants = await ctx.db.query("event_participants")
+                .filter(q => q.eq(q.field("eventId"), args.eventId))
+                .collect();
+
+            const isCreator = event.creatorId.split("|")[1] === user.tokenIdentifier.split("|")[1];
+            const hasJoined = participants.some((participant: any) => {
+                return participant.userId === user._id
+            });
+
+            return {
+                event,
+                isCreator,
+                hasJoined,
+            };
+        }
 
         return {
             event,
-            isCreator,
-            hasJoined,
-        };
+            isCreator: null,
+            hasJoined: null,
+        }
     }
 });
 
