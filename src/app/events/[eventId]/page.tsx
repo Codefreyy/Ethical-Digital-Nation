@@ -144,7 +144,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
       {isCreator && participants && participants.participants.length && (
         <ul className="flex flex-col gap-3">
           {participants.participants.map((p) => (
-            <li>{p?.name}</li>
+            <li key={p?._id}>{p?.name}</li>
           ))}
         </ul>
       )}

@@ -15,7 +15,7 @@ export default function Events() {
         <EventCreator />
       </div>
       <div className="grid sm:grid-cols-4 grid-cols-2 gap-3">
-        {events?.map((event) => <EventItem {...event} />)}
+        {events?.map((event) => <EventItem key={event._id} {...event} />)}
       </div>
     </>
   )
