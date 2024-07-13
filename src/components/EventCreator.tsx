@@ -30,13 +30,13 @@ import { Loader2 } from "lucide-react"
 import { Textarea } from "./ui/textarea"
 import { api } from "../../convex/_generated/api"
 import { toast } from "./ui/use-toast"
-import { v } from "convex/values"
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
   description: z.string().min(2).max(200),
   date: z.string(),
   location: z.string(),
+  link: z.string(),
 })
 
 export const EventCreator = () => {
@@ -49,6 +49,7 @@ export const EventCreator = () => {
       description: "",
       date: "",
       location: "",
+      link: "",
     },
   })
   const abortControllerRef = useRef<AbortController | null>(null)
@@ -123,6 +124,20 @@ export const EventCreator = () => {
                       <FormLabel>Description (optional)</FormLabel>
                       <FormControl>
                         <Textarea placeholder="Describe the event" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="link"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Link</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="url" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

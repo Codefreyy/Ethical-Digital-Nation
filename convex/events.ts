@@ -7,6 +7,7 @@ export const createEvent = mutation({
         description: v.string(),
         date: v.string(),
         location: v.string(),
+        link: v.string()
     },
     handler: async (ctx, args) => {
         const identity = await ctx.auth.getUserIdentity()
@@ -19,6 +20,7 @@ export const createEvent = mutation({
             date: args.date,
             location: args.location,
             creatorId: identity.tokenIdentifier,
+            link: args.link
         })
     }
 })

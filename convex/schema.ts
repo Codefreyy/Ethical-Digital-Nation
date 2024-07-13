@@ -1,5 +1,6 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { link } from "fs";
 
 export default defineSchema({
     files: defineTable({ title: v.string(), description: v.optional(v.string()), file: v.id('_storage') }),
@@ -15,6 +16,7 @@ export default defineSchema({
         date: v.string(),
         location: v.string(),
         creatorId: v.string(),
+        link: v.string(),
     }),
     event_participants: defineTable({
         eventId: v.id('events'),
