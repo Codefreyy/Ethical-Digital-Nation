@@ -37,8 +37,6 @@ export const getEventDetails = query({
     },
     async handler(ctx, args) {
         const identity = await ctx.auth.getUserIdentity();
-        console.log('identity12312', identity)
-
 
         const event = await ctx.db.get(args.eventId);
         if (!event) {

@@ -29,6 +29,7 @@ type Event = {
   location: string
   description: string
   creatorId: Id<"users">
+  link: string
 }
 
 type EventDetail = {
@@ -53,10 +54,8 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
     )
   }
 
-  console.log("event!!!!!!!!", event)
-
   const {
-    event: { name, date, location, description },
+    event: { name, date, location, description, link },
     isCreator,
     hasJoined,
   } = event as unknown as EventDetail
@@ -131,24 +130,36 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
 
         {isCreator && <Button variant="secondary">Edit</Button>}
       </div>
-      <div className="text-lg text-gray-600 mb-2 flex gap-2">
-        <CalendarClock />
-        {formatDate(date)}
+      <div className="flex flex-col gap-5">
+        {" "}
+        <div className="text-md text-gray-600 flex gap-2">
+          <CalendarClock />
+          {formatDate(date)}
+        </div>
+        <div className="text-md text-gray-600 flex gap-2">
+          <MapPin />
+          {location}
+        </div>
+        <div className="text-base">
+          Link:{" "}
+          <a
+            href={link}
+            target="_blank"
+            className=" text-gray-700 underline underline-offset-2 hover:no-underline"
+          >
+            {" "}
+            {link}
+          </a>
+        </div>
+        <div className="text-base text-gray-700 ">{description}</div>
+        {isCreator && participants && participants.participants && (
+          <ul className="flex flex-col gap-3">
+            {participants.participants.map((p) => (
+              <li key={p?._id}>{p?.name}</li>
+            ))}
+          </ul>
+        )}
       </div>
-      <div className="text-lg text-gray-600 mb-4 flex gap-2">
-        <MapPin />
-        {location}
-      </div>
-
-      <div className="text-base text-gray-700">{description}</div>
-
-      {isCreator && participants && participants.participants.length && (
-        <ul className="flex flex-col gap-3">
-          {participants.participants.map((p) => (
-            <li key={p?._id}>{p?.name}</li>
-          ))}
-        </ul>
-      )}
     </div>
   )
 }
