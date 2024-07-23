@@ -12,7 +12,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
 import { Id } from "../../../../convex/_generated/dataModel"
 import { toast } from "@/components/ui/use-toast"
@@ -21,6 +23,8 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card"
+import { useState } from "react"
+import { Label } from "@/components/ui/label"
 
 type EventPageProps = {
   params: {
@@ -35,6 +39,7 @@ type Event = {
   description: string
   creatorId: Id<"users">
   link: string
+  isContactPublic: boolean
 }
 
 type EventDetail = {
@@ -51,12 +56,23 @@ type EventDetail = {
 
 export default function EventPage({ params: { eventId } }: EventPageProps) {
   const joinEvent = useMutation(api.events.joinEvent)
+  const updateEvent = useMutation(api.events.updateEvent)
   const participants = useQuery(api.events.getEventParticipants, {
     eventId: eventId as Id<"events">,
   })
 
   const event = useQuery(api.events.getEventDetails, {
     eventId: eventId as Id<"events">,
+  })
+
+  const [isEditing, setIsEditing] = useState(false)
+  const [updatedEvent, setUpdatedEvent] = useState<Omit<Event, "creatorId">>({
+    name: "",
+    date: "",
+    location: "",
+    description: "",
+    link: "",
+    isContactPublic: false,
   })
 
   if (!event) {
@@ -66,7 +82,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
   }
 
   const {
-    event: { name, date, location, description, link },
+    event: { name, date, location, description, link, isContactPublic },
     isCreator,
     hasJoined,
     creator,
@@ -109,6 +125,40 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
     }
   }
 
+  const handleEditEvent = () => {
+    setUpdatedEvent({
+      name,
+      date,
+      location,
+      description,
+      link,
+      isContactPublic,
+    })
+    setIsEditing(true)
+  }
+
+  const handleSaveEvent = async () => {
+    try {
+      await updateEvent({
+        eventId: eventId as Id<"events">,
+        ...updatedEvent,
+      })
+      toast({
+        title: "Success",
+        description: "Event updated successfully",
+        duration: 2000,
+      })
+      setIsEditing(false)
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to update event",
+        variant: "destructive",
+        duration: 2000,
+      })
+    }
+  }
+
   return (
     <div className="">
       <Breadcrumb className="mb-8">
@@ -140,55 +190,124 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
           </Button>
         )}
 
-        {isCreator && <Button variant="secondary">Edit</Button>}
+        {isCreator && !isEditing && (
+          <Button variant="secondary" onClick={handleEditEvent}>
+            Edit
+          </Button>
+        )}
       </div>
       <div className="flex flex-col gap-5">
-        {creator && (
-          <HoverCard>
-            <HoverCardTrigger asChild>
-              <div className="inline-block w-32 text-blue-500 underline underline-offset-2 cursor-pointer">
-                {creator.username || ""}
-              </div>
-            </HoverCardTrigger>
-            <HoverCardContent className="w-80">
-              <div className="flex space-x-4">
-                <div className="space-y-1">
-                  <h4 className="text-sm font-semibold">@{creator.username}</h4>
-                  <p className="text-sm">
-                    <strong>Email:</strong> {creator.email}
-                  </p>
-                  <p className="text-sm">
-                    <strong>Bio:</strong> {creator.bio}
-                  </p>
-                  <p className="text-sm">
-                    <strong>Organization:</strong> {creator.organization}
-                  </p>
-                </div>
-              </div>
-            </HoverCardContent>
-          </HoverCard>
+        {isCreator && isEditing ? (
+          <>
+            <Label htmlFor="name">Event Name</Label>
+            <Input
+              value={updatedEvent.name}
+              onChange={(e) =>
+                setUpdatedEvent({ ...updatedEvent, name: e.target.value })
+              }
+            />
+            <Label htmlFor="date">Date</Label>
+            <Input
+              type="datetime-local"
+              value={updatedEvent.date}
+              onChange={(e) =>
+                setUpdatedEvent({ ...updatedEvent, date: e.target.value })
+              }
+            />
+            <Label htmlFor="date">Location</Label>
+
+            <Input
+              value={updatedEvent.location}
+              onChange={(e) =>
+                setUpdatedEvent({ ...updatedEvent, location: e.target.value })
+              }
+            />
+            <Label htmlFor="date">Description</Label>
+
+            <Textarea
+              value={updatedEvent.description}
+              onChange={(e) =>
+                setUpdatedEvent({
+                  ...updatedEvent,
+                  description: e.target.value,
+                })
+              }
+            />
+            <Label htmlFor="date">Link</Label>
+            <Input
+              value={updatedEvent.link}
+              onChange={(e) =>
+                setUpdatedEvent({ ...updatedEvent, link: e.target.value })
+              }
+            />
+            <div className="flex items-center">
+              <Switch
+                checked={updatedEvent.isContactPublic}
+                onCheckedChange={(checked) =>
+                  setUpdatedEvent({ ...updatedEvent, isContactPublic: checked })
+                }
+              />
+              <label className="ml-2">Share your contact for this event?</label>
+            </div>
+            <div className="flex justify-end items-center gap-2">
+              <Button variant="outline" onClick={() => setIsEditing(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSaveEvent}>Save</Button>
+            </div>
+          </>
+        ) : (
+          <>
+            {creator && (
+              <HoverCard>
+                <HoverCardTrigger asChild>
+                  <div className="inline-block w-32 text-blue-500 underline underline-offset-2 cursor-pointer">
+                    {creator.username || ""}
+                  </div>
+                </HoverCardTrigger>
+                <HoverCardContent className="w-80">
+                  <div className="flex space-x-4">
+                    <div className="space-y-1">
+                      <h4 className="text-sm font-semibold">
+                        @{creator.username}
+                      </h4>
+                      <p className="text-sm">
+                        <strong>Email:</strong> {creator.email}
+                      </p>
+                      <p className="text-sm">
+                        <strong>Bio:</strong> {creator.bio}
+                      </p>
+                      <p className="text-sm">
+                        <strong>Organization:</strong> {creator.organization}
+                      </p>
+                    </div>
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
+            )}
+            {!creator && <p>Created by: Anonymous</p>}
+            <div className="text-md text-gray-600 flex gap-2">
+              <CalendarClock />
+              {formatDate(date)}
+            </div>
+            <div className="text-md text-gray-600 flex gap-2">
+              <MapPin />
+              {location}
+            </div>
+            <div className="text-base">
+              Link:{" "}
+              <a
+                href={link}
+                target="_blank"
+                className=" text-gray-700 underline underline-offset-2 hover:no-underline"
+              >
+                {" "}
+                {link}
+              </a>
+            </div>
+            <div className="text-base text-gray-700 ">{description}</div>
+          </>
         )}
-        {!creator && <p>Created by: Anonymous</p>}{" "}
-        <div className="text-md text-gray-600 flex gap-2">
-          <CalendarClock />
-          {formatDate(date)}
-        </div>
-        <div className="text-md text-gray-600 flex gap-2">
-          <MapPin />
-          {location}
-        </div>
-        <div className="text-base">
-          Link:{" "}
-          <a
-            href={link}
-            target="_blank"
-            className=" text-gray-700 underline underline-offset-2 hover:no-underline"
-          >
-            {" "}
-            {link}
-          </a>
-        </div>
-        <div className="text-base text-gray-700 ">{description}</div>
         {isCreator && participants && participants.participants && (
           <ul className="flex flex-col gap-3">
             {participants.participants.map((p) => (

@@ -152,3 +152,39 @@ export const getEventParticipants = query({
         return { participants: users };
     }
 });
+
+export const updateEvent = mutation({
+    args: {
+        eventId: v.id("events"),
+        name: v.string(),
+        description: v.string(),
+        date: v.string(),
+        location: v.string(),
+        link: v.string(),
+        isContactPublic: v.boolean(),
+    },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (!identity) {
+            throw new Error('not authenticated')
+        }
+
+        const event = await ctx.db.get(args.eventId)
+        if (!event) {
+            throw new Error('Event not found')
+        }
+
+        if (event.creatorId !== identity.tokenIdentifier) {
+            throw new Error('You do not have permission to edit this event')
+        }
+
+        await ctx.db.patch(args.eventId, {
+            name: args.name,
+            description: args.description,
+            date: args.date,
+            location: args.location,
+            link: args.link,
+            isContactPublic: args.isContactPublic,
+        })
+    }
+})
