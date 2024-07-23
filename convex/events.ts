@@ -188,3 +188,26 @@ export const updateEvent = mutation({
         })
     }
 })
+
+export const deleteEvent = mutation({
+    args: {
+        eventId: v.id("events"),
+    },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity()
+        if (!identity) {
+            throw new Error('not authenticated')
+        }
+
+        const event = await ctx.db.get(args.eventId)
+        if (!event) {
+            throw new Error('Event not found')
+        }
+
+        if (event.creatorId !== identity.tokenIdentifier) {
+            throw new Error('You do not have permission to delete this event')
+        }
+
+        await ctx.db.delete(args.eventId)
+    }
+})

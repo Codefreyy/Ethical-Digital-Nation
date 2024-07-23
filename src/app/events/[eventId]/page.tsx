@@ -3,7 +3,7 @@
 import { useMutation, useQuery } from "convex/react"
 import { api } from "../../../../convex/_generated/api"
 import { formatDate } from "@/lib/utils"
-import { CalendarClock, ChevronDownIcon, MapPin } from "lucide-react"
+import { CalendarClock, MapPin } from "lucide-react"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -24,6 +24,15 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 
 type EventPageProps = {
@@ -57,15 +66,18 @@ type EventDetail = {
 export default function EventPage({ params: { eventId } }: EventPageProps) {
   const joinEvent = useMutation(api.events.joinEvent)
   const updateEvent = useMutation(api.events.updateEvent)
+  const deleteEvent = useMutation(api.events.deleteEvent)
   const participants = useQuery(api.events.getEventParticipants, {
     eventId: eventId as Id<"events">,
   })
+  const router = useRouter()
 
   const event = useQuery(api.events.getEventDetails, {
     eventId: eventId as Id<"events">,
   })
 
   const [isEditing, setIsEditing] = useState(false)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [updatedEvent, setUpdatedEvent] = useState<Omit<Event, "creatorId">>({
     name: "",
     date: "",
@@ -75,7 +87,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
     isContactPublic: false,
   })
 
-  if (!event) {
+  if (!event || !event.event) {
     return (
       <div className="text-center py-20 text-gray-500">No event found.</div>
     )
@@ -87,8 +99,6 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
     hasJoined,
     creator,
   } = event as unknown as EventDetail
-
-  console.log(creator, "creator")
 
   const handleJoinEvent = async () => {
     try {
@@ -159,6 +169,25 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
     }
   }
 
+  const handleDeleteEvent = async () => {
+    try {
+      await deleteEvent({ eventId: eventId as Id<"events"> })
+      toast({
+        title: "Success",
+        description: "Event deleted successfully",
+        duration: 2000,
+      })
+      router.push("/events")
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to delete event",
+        variant: "destructive",
+        duration: 2000,
+      })
+    }
+  }
+
   return (
     <div className="">
       <Breadcrumb className="mb-8">
@@ -191,9 +220,22 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
         )}
 
         {isCreator && !isEditing && (
-          <Button variant="secondary" onClick={handleEditEvent}>
-            Edit
-          </Button>
+          <div className="flex justify-end items-center gap-2">
+            <Button variant="secondary" onClick={handleEditEvent}>
+              Edit
+            </Button>
+            <Button variant="destructive" onClick={() => setIsDialogOpen(true)}>
+              Delete
+            </Button>
+          </div>
+        )}
+        {isCreator && isEditing && (
+          <div className="flex justify-end items-center gap-2">
+            <Button variant="outline" onClick={() => setIsEditing(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSaveEvent}>Save</Button>
+          </div>
         )}
       </div>
       <div className="flex flex-col gap-5">
@@ -249,12 +291,6 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
               />
               <label className="ml-2">Share your contact for this event?</label>
             </div>
-            <div className="flex justify-end items-center gap-2">
-              <Button variant="outline" onClick={() => setIsEditing(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleSaveEvent}>Save</Button>
-            </div>
           </>
         ) : (
           <>
@@ -262,7 +298,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
               <HoverCard>
                 <HoverCardTrigger asChild>
                   <div className="inline-block w-32 text-blue-500 underline underline-offset-2 cursor-pointer">
-                    {creator.username || ""}
+                    Event Creator: {creator.username || ""}
                   </div>
                 </HoverCardTrigger>
                 <HoverCardContent className="w-80">
@@ -316,6 +352,25 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
           </ul>
         )}
       </div>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Delete</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this event? This action cannot be
+              undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteEvent}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
