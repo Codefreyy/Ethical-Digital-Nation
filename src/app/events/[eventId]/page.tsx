@@ -16,6 +16,11 @@ import {
 import { Button } from "@/components/ui/button"
 import { Id } from "../../../../convex/_generated/dataModel"
 import { toast } from "@/components/ui/use-toast"
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card"
 
 type EventPageProps = {
   params: {
@@ -36,6 +41,12 @@ type EventDetail = {
   event: Event
   isCreator: boolean
   hasJoined: boolean
+  creator: {
+    username: string
+    email: string | undefined
+    bio: string
+    organization: string
+  }
 }
 
 export default function EventPage({ params: { eventId } }: EventPageProps) {
@@ -58,9 +69,10 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
     event: { name, date, location, description, link },
     isCreator,
     hasJoined,
+    creator,
   } = event as unknown as EventDetail
 
-  console.log(participants, "participants")
+  console.log(creator, "creator")
 
   const handleJoinEvent = async () => {
     try {
@@ -131,7 +143,32 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
         {isCreator && <Button variant="secondary">Edit</Button>}
       </div>
       <div className="flex flex-col gap-5">
-        {" "}
+        {creator && (
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <div className="inline-block w-32 text-blue-500 underline underline-offset-2 cursor-pointer">
+                {creator.username || ""}
+              </div>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-80">
+              <div className="flex space-x-4">
+                <div className="space-y-1">
+                  <h4 className="text-sm font-semibold">@{creator.username}</h4>
+                  <p className="text-sm">
+                    <strong>Email:</strong> {creator.email}
+                  </p>
+                  <p className="text-sm">
+                    <strong>Bio:</strong> {creator.bio}
+                  </p>
+                  <p className="text-sm">
+                    <strong>Organization:</strong> {creator.organization}
+                  </p>
+                </div>
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+        )}
+        {!creator && <p>Created by: Anonymous</p>}{" "}
         <div className="text-md text-gray-600 flex gap-2">
           <CalendarClock />
           {formatDate(date)}

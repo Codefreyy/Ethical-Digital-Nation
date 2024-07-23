@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/use-toast"
 
-const UserProfile = () => {
+const PersonalCenter = () => {
   const { user, isLoaded } = useUser()
   const [username, setUsername] = useState("")
   const [role, setRole] = useState("")
@@ -36,6 +36,16 @@ const UserProfile = () => {
       setOrganization(currentUser.organization || "")
       setBio(currentUser.bio || "")
       setResearchInterests(currentUser.researchInterests || "")
+
+      if (
+        !currentUser.username &&
+        !currentUser.role &&
+        !currentUser.organization &&
+        !currentUser.bio &&
+        !currentUser.researchInterests
+      ) {
+        setIsEditing(true)
+      }
     }
   }, [isLoaded, user, currentUser])
 
@@ -121,11 +131,11 @@ const UserProfile = () => {
               onChange={(e) => setResearchInterests(e.target.value)}
             />
           </div>
-          <div className="flex justify-between items-center">
+          <div className="flex justify-start gap-2 items-center">
+            <Button onClick={handleSave}>Save</Button>
             <Button variant="outline" onClick={() => setIsEditing(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSave}>Save</Button>
           </div>
         </>
       ) : (
@@ -150,14 +160,9 @@ const UserProfile = () => {
             <Label className="font-semibold text-gray-700">
               Research Interests:
             </Label>
-            <p className="text-gray-900">
-              {researchInterests}
-            </p>
+            <p className="text-gray-900">{researchInterests}</p>
           </div>
           <div className="flex justify-between items-center">
-            <SignOutButton>
-              <Button variant="outline">Sign Out</Button>
-            </SignOutButton>
             <Button onClick={() => setIsEditing(true)}>Edit</Button>
           </div>
         </>
@@ -166,4 +171,4 @@ const UserProfile = () => {
   )
 }
 
-export default UserProfile
+export default PersonalCenter

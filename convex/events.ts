@@ -7,7 +7,8 @@ export const createEvent = mutation({
         description: v.string(),
         date: v.string(),
         location: v.string(),
-        link: v.string()
+        link: v.string(),
+        isContactPublic: v.boolean(),
     },
     handler: async (ctx, args) => {
         const identity = await ctx.auth.getUserIdentity()
@@ -20,7 +21,8 @@ export const createEvent = mutation({
             date: args.date,
             location: args.location,
             creatorId: identity.tokenIdentifier,
-            link: args.link
+            link: args.link,
+            isContactPublic: args.isContactPublic
         })
     }
 })
@@ -31,13 +33,14 @@ export const getEvents = query({
     }
 })
 
+
 export const getEventDetails = query({
     args: {
         eventId: v.id("events"),
     },
     async handler(ctx, args) {
         const identity = await ctx.auth.getUserIdentity();
-
+        let user: any
         const event = await ctx.db.get(args.eventId);
         if (!event) {
             return { error: "event_not_found" };
@@ -49,10 +52,10 @@ export const getEventDetails = query({
                 : `https://undefined|${identity.tokenIdentifier.split("|")[1]}`;
 
             console.log('identity', tokenIdentifier, identity.tokenIdentifier)
-            const user = await ctx.db.query("users")
+            user = await ctx.db.query("users")
                 .filter(q => q.eq(q.field("tokenIdentifier"), tokenIdentifier))
                 .first();
-
+            console.log('see user', user)
 
             if (!user) {
                 return { error: "user_not_found" };
@@ -66,10 +69,13 @@ export const getEventDetails = query({
                 return participant.userId === user._id
             });
 
+            console.log('iscontactpubicsadasdasda', event.isContactPublic)
+
             return {
                 event,
                 isCreator,
                 hasJoined,
+                creator: event.isContactPublic ? user : null // 根据是否公开返回创建者信息
             };
         }
 
@@ -77,9 +83,11 @@ export const getEventDetails = query({
             event,
             isCreator: null,
             hasJoined: null,
+            creator: event.isContactPublic ? user : null // 根据是否公开返回创建者信息
         }
     }
 });
+
 
 export const joinEvent = mutation({
     args: {

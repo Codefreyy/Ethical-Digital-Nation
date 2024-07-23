@@ -3,7 +3,7 @@
 import { z } from "zod"
 import { useRef, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { set, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { useConvexAuth, useMutation, useQuery } from "convex/react"
 
 import {
@@ -30,6 +30,7 @@ import { Loader2 } from "lucide-react"
 import { Textarea } from "./ui/textarea"
 import { api } from "../../convex/_generated/api"
 import { toast } from "./ui/use-toast"
+import { Switch } from "./ui/switch"
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -37,6 +38,7 @@ const formSchema = z.object({
   date: z.string(),
   location: z.string(),
   link: z.string(),
+  isContactPublic: z.boolean(),
 })
 
 export const EventCreator = () => {
@@ -50,6 +52,7 @@ export const EventCreator = () => {
       date: "",
       location: "",
       link: "",
+      isContactPublic: false,
     },
   })
   const abortControllerRef = useRef<AbortController | null>(null)
@@ -165,6 +168,22 @@ export const EventCreator = () => {
                       <FormLabel>Location</FormLabel>
                       <FormControl>
                         <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="isContactPublic"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Make your contact public?</FormLabel>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

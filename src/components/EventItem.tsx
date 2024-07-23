@@ -21,8 +21,8 @@ export default function EventItem({
 }: {
   name: string
   description: string
-  date: string
-  location: string
+  date?: string
+  location?: string
   _id: string
 }) {
   const router = useRouter()
@@ -39,7 +39,7 @@ export default function EventItem({
           {/* <FileCardActions file={file} /> */}
         </div>
         <CardDescription>
-          {formatDate(date)} - {location}
+          {date && formatDate(date) + (location ? ` • ${location}` : "")}
         </CardDescription>
       </CardHeader>
 
