@@ -100,13 +100,9 @@ export const FileUploader = () => {
   const { isAuthenticated } = useConvexAuth()
 
   useEffect(() => {
-    console.log(abortControllerRef, abortControllerRef)
     if (!isFileDialogOpen && abortControllerRef.current) {
-      console.log("dad")
-
       abortControllerRef.current.abort()
       abortControllerRef.current = null
-      
     }
   }, [isFileDialogOpen])
   return (
@@ -118,7 +114,6 @@ export const FileUploader = () => {
               if (!isAuthenticated) {
                 return
               }
-              console.log("isAuthenticated", isAuthenticated)
               setIsFileDialogOpen(true)
             }}
           >

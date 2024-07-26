@@ -57,7 +57,6 @@ const PersonalCenter = () => {
       bio,
       researchInterests,
     })
-    console.log(res, "res1231")
     if (res.status === "success") {
       toast({
         title: "Profile updated",

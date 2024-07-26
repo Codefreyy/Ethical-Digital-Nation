@@ -7,7 +7,7 @@ import EventItem from "@/components/EventItem"
 
 export default function Events() {
   const events = useQuery(api.events.getEvents)
-
+  console.log('events', events)
   return (
     <>
       <div className="flex justify-between items-center mb-8">

@@ -5,9 +5,9 @@ export const createEvent = mutation({
     args: {
         name: v.string(),
         description: v.string(),
-        date: v.string(),
-        location: v.string(),
-        link: v.string(),
+        date: v.string() || undefined,
+        location: v.string() || undefined,
+        link: v.string() || undefined,
         isContactPublic: v.boolean(),
     },
     handler: async (ctx, args) => {
@@ -51,11 +51,9 @@ export const getEventDetails = query({
                 ? identity.tokenIdentifier
                 : `https://undefined|${identity.tokenIdentifier.split("|")[1]}`;
 
-            console.log('identity', tokenIdentifier, identity.tokenIdentifier)
             user = await ctx.db.query("users")
                 .filter(q => q.eq(q.field("tokenIdentifier"), tokenIdentifier))
                 .first();
-            console.log('see user', user)
 
             if (!user) {
                 return { error: "user_not_found" };
@@ -69,7 +67,6 @@ export const getEventDetails = query({
                 return participant.userId === user._id
             });
 
-            console.log('iscontactpubicsadasdasda', event.isContactPublic)
 
             return {
                 event,

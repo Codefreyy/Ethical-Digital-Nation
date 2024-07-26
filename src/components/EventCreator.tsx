@@ -34,10 +34,10 @@ import { Switch } from "./ui/switch"
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
-  description: z.string().min(2).max(200),
-  date: z.string(),
-  location: z.string(),
-  link: z.string(),
+  description: z.string().min(2).max(1000),
+  date: z.optional(z.string()),
+  location: z.optional(z.string()),
+  link: z.optional(z.string()),
   isContactPublic: z.boolean(),
 })
 
@@ -63,7 +63,7 @@ export const EventCreator = () => {
       abortControllerRef.current = new AbortController()
       const { signal } = abortControllerRef.current
 
-      await createEvent(value)
+      await createEvent(value as any)
 
       toast({
         title: "Event created",
@@ -126,7 +126,7 @@ export const EventCreator = () => {
                     <FormItem>
                       <FormLabel>Description (optional)</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Describe the event" {...field} />
+                        <Textarea {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -152,7 +152,7 @@ export const EventCreator = () => {
                   name="date"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Date</FormLabel>
+                      <FormLabel>Date(optional)</FormLabel>
                       <FormControl>
                         <Input {...field} type="datetime-local" />
                       </FormControl>

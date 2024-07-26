@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { formatDate } from "@/lib/utils"
+import { CalendarClock, MapPin } from "lucide-react"
 
 import { useRouter } from "next/navigation"
 
@@ -42,7 +43,20 @@ export default function EventItem({
           {/* <FileCardActions file={file} /> */}
         </div>
         <CardDescription>
-          {date && formatDate(date) + (location ? ` • ${location}` : "")}
+          <div>
+            {location && (
+              <div className=" text-gray-600 flex gap-2 items-center">
+                <MapPin className="w-4 h-4" />
+                {location}
+              </div>
+            )}
+            {date && (
+              <div className="text-gray-600 flex gap-2 items-center">
+                <CalendarClock className="w-4 h-4" />
+                {formatDate(date)}
+              </div>
+            )}
+          </div>
         </CardDescription>
       </CardHeader>
 

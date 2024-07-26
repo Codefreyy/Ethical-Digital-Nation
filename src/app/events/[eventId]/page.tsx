@@ -102,15 +102,15 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
     creator,
   } = event as unknown as EventDetail
 
-  console.log()
+  console.log(event, "event")
 
   const handleJoinEvent = async () => {
     try {
       await joinEvent({ eventId: eventId as Id<"events"> })
       toast({
         title: "Success",
-        description: "You have successfully joined the event",
-        duration: 2000,
+        description: "You have successfully shown interest in this event.",
+        duration: 5000,
       })
     } catch (error: any) {
       const errorMessage = (error as Error).message
@@ -329,26 +329,30 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
             )}
             {!creator && <p>Created by: Anonymous</p>}
             {date && (
-              <div className="text-md text-gray-600 flex gap-2">
-                <CalendarClock />
+              <div className="text-gray-600 flex gap-2">
+                <CalendarClock className="w-4 h-4" />
                 {formatDate(date)}
               </div>
             )}
-            <div className=" text-gray-600 flex gap-2">
-              <MapPin className="w-4 h-4" />
-              {location}
-            </div>
-            <div className="">
-              Link:{" "}
-              <a
-                href={link}
-                target="_blank"
-                className=" text-gray-700 underline underline-offset-2 hover:no-underline"
-              >
-                {" "}
-                {link}
-              </a>
-            </div>
+            {location && (
+              <div className=" text-gray-600 flex gap-2">
+                <MapPin className="w-4 h-4" />
+                {location}
+              </div>
+            )}
+            {link && (
+              <div>
+                Link:{" "}
+                <a
+                  href={link}
+                  target="_blank"
+                  className=" text-gray-700 underline underline-offset-2 hover:no-underline"
+                >
+                  {" "}
+                  {link}
+                </a>
+              </div>
+            )}
             <div className=" text-gray-700 ">{description}</div>
           </>
         )}
