@@ -86,48 +86,44 @@ export const getEventDetails = query({
 });
 
 
-export const joinEvent = mutation({
+export const toggleInterest = mutation({
     args: {
         eventId: v.id("events"),
     },
     handler: async (ctx, args) => {
-        const identity = await ctx.auth.getUserIdentity();
+        const identity = await ctx.auth.getUserIdentity()
         if (!identity) {
-            throw new Error("not authenticated");
+            throw new Error("not authenticated")
         }
 
-
-        // 确认 tokenIdentifier 包含正确的前缀
         const tokenIdentifier = identity.tokenIdentifier.startsWith("https://undefined|")
             ? identity.tokenIdentifier
-            : `https://undefined|${identity.tokenIdentifier.split("|")[1]}`;
+            : `https://undefined|${identity.tokenIdentifier.split("|")[1]}`
 
-
-        const user = await ctx.db
-            .query("users")
+        const user = await ctx.db.query("users")
             .filter(q => q.eq(q.field("tokenIdentifier"), tokenIdentifier))
-            .first();
+            .first()
 
         if (!user) {
-            throw new Error("User not found");
+            throw new Error("User not found")
         }
 
-        // 确认用户未参加过这个活动
-        const existingParticipant = await ctx.db
-            .query("event_participants")
+        const existingParticipant = await ctx.db.query("event_participants")
             .filter(q => q.and(q.eq(q.field("userId"), user._id), q.eq(q.field("eventId"), args.eventId)))
-            .first();
+            .first()
 
         if (existingParticipant) {
-            throw new Error("User already joined event");
+            await ctx.db.delete(existingParticipant._id)
+            return { action: "unjoined" }
+        } else {
+            await ctx.db.insert("event_participants", {
+                userId: user._id,
+                eventId: args.eventId,
+            })
+            return { action: "joined" }
         }
-
-        return ctx.db.insert("event_participants", {
-            userId: user._id,
-            eventId: args.eventId,
-        });
     },
-});
+})
 
 export const getEventParticipants = query({
     args: {

@@ -36,6 +36,7 @@ import {
 import { Label } from "@/components/ui/label"
 import ParticipantsTable from "@/components/ParticipantsTable"
 import { Separator } from "@/components/ui/separator"
+import { debounce } from "lodash"
 
 type EventPageProps = {
   params: {
@@ -66,7 +67,7 @@ type EventDetail = {
 }
 
 export default function EventPage({ params: { eventId } }: EventPageProps) {
-  const joinEvent = useMutation(api.events.joinEvent)
+  const toggleInterest = useMutation(api.events.toggleInterest)
   const updateEvent = useMutation(api.events.updateEvent)
   const deleteEvent = useMutation(api.events.deleteEvent)
   const participants = useQuery(api.events.getEventParticipants, {
@@ -102,42 +103,26 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
     creator,
   } = event as unknown as EventDetail
 
-  console.log(event, "event")
-
-  const handleJoinEvent = async () => {
+  const handleToggleInterest = debounce(async () => {
     try {
-      await joinEvent({ eventId: eventId as Id<"events"> })
+      const result = await toggleInterest({ eventId: eventId as Id<"events"> })
       toast({
         title: "Success",
-        description: "You have successfully shown interest in this event.",
+        description:
+          result.action === "joined"
+            ? "You have successfully shown interest in this event. Your contact information will be visible to the event organizers."
+            : "You have successfully cancelled your interest in this event.",
         duration: 5000,
       })
     } catch (error: any) {
-      const errorMessage = (error as Error).message
-      if (errorMessage.includes("User not found")) {
-        toast({
-          title: "Error",
-          description: "You haven't signed up yet. Please sign up first.",
-          variant: "destructive",
-          duration: 2000,
-        })
-      } else if (errorMessage.includes("User already joined event")) {
-        toast({
-          title: "Error",
-          description: "You have already joined this event",
-          variant: "destructive",
-          duration: 2000,
-        })
-      } else if (errorMessage.includes("not authenticated")) {
-        toast({
-          title: "Error",
-          description: "You need to be authenticated to join an event",
-          variant: "destructive",
-          duration: 2000,
-        })
-      }
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+        duration: 2000,
+      })
     }
-  }
+  }, 300)
 
   const handleEditEvent = () => {
     setUpdatedEvent({
@@ -213,17 +198,11 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
         <h1 className="sm:text-3xl text-2xl font-bold mb-4 text-gray-800">
           {name}
         </h1>
-        {!isCreator && !hasJoined && (
-          <Button variant="secondary" onClick={handleJoinEvent}>
-            Show Interest
+        {!isCreator && (
+          <Button variant="secondary" onClick={handleToggleInterest}>
+            {hasJoined ? "Cancel Interest" : "Show Interest"}
           </Button>
         )}
-        {!isCreator && hasJoined && (
-          <Button variant="secondary" disabled>
-            Interested
-          </Button>
-        )}
-
         {isCreator && !isEditing && (
           <div className="flex justify-end items-center gap-2">
             <Button variant="secondary" onClick={handleEditEvent}>
