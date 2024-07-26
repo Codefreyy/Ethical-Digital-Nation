@@ -22,7 +22,7 @@ export default defineSchema({
         date: v.optional(v.string()),
         location: v.optional(v.string()),
         creatorId: v.string(),
-        link: v.string(),
+        link: v.optional(v.string()),
         isContactPublic: v.boolean(),
     }),
     event_participants: defineTable({

@@ -3,7 +3,7 @@
 import { useMutation, useQuery } from "convex/react"
 import { api } from "../../../../convex/_generated/api"
 import { formatDate } from "@/lib/utils"
-import { CalendarClock, MapPin } from "lucide-react"
+import { CalendarClock, MapPin, BadgeInfo } from "lucide-react"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -34,6 +34,8 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
+import ParticipantsTable from "@/components/ParticipantsTable"
+import { Separator } from "@/components/ui/separator"
 
 type EventPageProps = {
   params: {
@@ -99,6 +101,8 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
     hasJoined,
     creator,
   } = event as unknown as EventDetail
+
+  console.log()
 
   const handleJoinEvent = async () => {
     try {
@@ -205,17 +209,18 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-
-      <div className="flex justify-between w-full">
-        <h1 className="text-4xl font-bold mb-4 text-gray-800">{name}</h1>
+      <div className="flex justify-between w-full items-start">
+        <h1 className="sm:text-3xl text-2xl font-bold mb-4 text-gray-800">
+          {name}
+        </h1>
         {!isCreator && !hasJoined && (
           <Button variant="secondary" onClick={handleJoinEvent}>
-            Join
+            Show Interest
           </Button>
         )}
         {!isCreator && hasJoined && (
           <Button variant="secondary" disabled>
-            Already Joined
+            Interested
           </Button>
         )}
 
@@ -238,7 +243,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
           </div>
         )}
       </div>
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-5 text-sm text-gray-600">
         {isCreator && isEditing ? (
           <>
             <Label htmlFor="name">Event Name</Label>
@@ -248,7 +253,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
                 setUpdatedEvent({ ...updatedEvent, name: e.target.value })
               }
             />
-            <Label htmlFor="date">Date</Label>
+            <Label htmlFor="date">Date(optional)</Label>
             <Input
               type="datetime-local"
               value={updatedEvent.date}
@@ -256,7 +261,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
                 setUpdatedEvent({ ...updatedEvent, date: e.target.value })
               }
             />
-            <Label htmlFor="date">Location</Label>
+            <Label htmlFor="date">Location(optional)</Label>
 
             <Input
               value={updatedEvent.location}
@@ -275,7 +280,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
                 })
               }
             />
-            <Label htmlFor="date">Link</Label>
+            <Label htmlFor="date">Link(optional)</Label>
             <Input
               value={updatedEvent.link}
               onChange={(e) =>
@@ -297,8 +302,9 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
             {creator && (
               <HoverCard>
                 <HoverCardTrigger asChild>
-                  <div className="inline-block w-32 text-blue-500 underline underline-offset-2 cursor-pointer">
-                    Event Creator: {creator.username || ""}
+                  <div className="flex gap-2 items-center underline hover:no-underline underline-offset-2 cursor-pointer">
+                    <BadgeInfo className="w-4 h-4" /> Event Creator:{" "}
+                    {creator.username || ""}
                   </div>
                 </HoverCardTrigger>
                 <HoverCardContent className="w-80">
@@ -322,15 +328,17 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
               </HoverCard>
             )}
             {!creator && <p>Created by: Anonymous</p>}
-            <div className="text-md text-gray-600 flex gap-2">
-              <CalendarClock />
-              {formatDate(date)}
-            </div>
-            <div className="text-md text-gray-600 flex gap-2">
-              <MapPin />
+            {date && (
+              <div className="text-md text-gray-600 flex gap-2">
+                <CalendarClock />
+                {formatDate(date)}
+              </div>
+            )}
+            <div className=" text-gray-600 flex gap-2">
+              <MapPin className="w-4 h-4" />
               {location}
             </div>
-            <div className="text-base">
+            <div className="">
               Link:{" "}
               <a
                 href={link}
@@ -341,15 +349,16 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
                 {link}
               </a>
             </div>
-            <div className="text-base text-gray-700 ">{description}</div>
+            <div className=" text-gray-700 ">{description}</div>
           </>
         )}
-        {isCreator && participants && participants.participants && (
-          <ul className="flex flex-col gap-3">
-            {participants.participants.map((p) => (
-              <li key={p?._id}>{p?.name}</li>
-            ))}
-          </ul>
+
+        {isCreator && participants && (
+          <>
+            <Separator className="mt-4" />
+            <h2 className="text-md font-semibold">Interested Users</h2>
+            <ParticipantsTable participants={participants} />
+          </>
         )}
       </div>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

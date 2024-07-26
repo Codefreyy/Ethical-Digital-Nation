@@ -149,7 +149,7 @@ export const getEventParticipants = query({
 
         const users = await Promise.all(userIds.map(userId => ctx.db.get(userId)));
 
-        return { participants: users };
+        return users;
     }
 });
 

@@ -138,7 +138,7 @@ export const EventCreator = () => {
                   name="link"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Link</FormLabel>
+                      <FormLabel>Link(optional)</FormLabel>
                       <FormControl>
                         <Input {...field} type="url" />
                       </FormControl>
@@ -165,7 +165,7 @@ export const EventCreator = () => {
                   name="location"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Location</FormLabel>
+                      <FormLabel>Location(optional)</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>

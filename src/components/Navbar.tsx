@@ -29,7 +29,7 @@ export const Navbar = () => {
   }
 
   return (
-    <header className="border-b sticky top-0 left-0 right-0">
+    <header className="border-b sticky top-0 left-0 right-0 bg-white">
       <div className="container mx-auto flex justify-between items-center my-3">
         <Link href="/" className="">
           Ethical Digital Nation

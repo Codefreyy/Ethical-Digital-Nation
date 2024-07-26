@@ -18,14 +18,17 @@ export default function EventItem({
   date,
   location,
   _id,
+  creator,
 }: {
   name: string
   description: string
   date?: string
   location?: string
   _id: string
+  creator?: string
 }) {
   const router = useRouter()
+  console.log(date, location, creator)
   return (
     <Card
       className="group hover:shadow-md cursor-pointer"
@@ -34,7 +37,7 @@ export default function EventItem({
       }}
     >
       <CardHeader className="relative">
-        <CardTitle className="sm:text-xl text-md ">{name}</CardTitle>
+        <CardTitle className="sm:text-xl text-lg ">{name}</CardTitle>
         <div className="absolute top-2 right-2">
           {/* <FileCardActions file={file} /> */}
         </div>
