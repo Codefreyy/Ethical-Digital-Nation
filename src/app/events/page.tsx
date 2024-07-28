@@ -1,21 +1,42 @@
 "use client"
 
 import { EventCreator } from "@/components/EventCreator"
-import { useQuery } from "convex/react"
+import { useQuery, useMutation } from "convex/react"
 import { api } from "../../../convex/_generated/api"
 import EventItem from "@/components/EventItem"
-import { useEffect, useState } from "react"
+import { SetStateAction, useEffect, useState } from "react"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
+
+type SortComponentType = {
+  onSortChange: (value: string) => void
+}
+
+const sortTermDict: Record<string, string> = {
+  createTimeDesc: "Creation Time (New to Old)",
+  createTimeAsc: "Creation Time (Old to New)",
+  startTimeDesc: "Start Time (New to Old)",
+  startTimeAsc: "Start Time (Old to New)",
+} as const
+
 // Sort component
-const Sort = ({ onSortChange }: { onSortChange: (value: string) => void }) => {
+const Sort = ({ onSortChange }: SortComponentType) => {
+  const handleSortChange = (value: string) => {
+    console.log("value", value)
+    onSortChange(value)
+    setSortTerm(sortTermDict[value])
+  }
+
+  const [sortTerm, setSortTerm] = useState("Creation Time (New to Old)")
+
   return (
-    <Select onValueChange={onSortChange}>
-      <SelectTrigger>CreationTime(New to Old)</SelectTrigger>
+    <Select onValueChange={handleSortChange}>
+      <SelectTrigger>{sortTerm}</SelectTrigger>
       <SelectContent>
         <SelectItem value="createTimeDesc">
           Creation Time (New to Old)
@@ -32,10 +53,12 @@ const Sort = ({ onSortChange }: { onSortChange: (value: string) => void }) => {
 
 export default function Events() {
   const events = useQuery(api.events.getEvents)
+  const [searchTerm, setSearchTerm] = useState("")
   const [sortedEvents, setSortedEvents] = useState(events || [])
   const [sortOption, setSortOption] = useState("createTimeDesc")
 
   useEffect(() => {
+    console.log("sortOption", sortOption)
     if (events) {
       let sorted = [...events]
       switch (sortOption) {
@@ -70,20 +93,46 @@ export default function Events() {
     }
   }, [events, sortOption])
 
+  const handleSearchChange = (e: {
+    target: { value: SetStateAction<string> }
+  }) => {
+    setSearchTerm(e.target.value)
+  }
+
+  const searchResults =
+    useQuery(api.events.searchEventsByName, { name: searchTerm }) || []
+
   return (
     <>
       <div className="flex justify-between items-center mb-8">
         <h4 className="text-2xl font-semibold">Events</h4>
         <EventCreator />
       </div>
-      <div className="flex justify-between items-center mb-8">
-        <div className="flex-grow"></div>
-        <div className="flex-shrink-0">
+      <div className="flex gap-5 justify-between items-center mb-8">
+        <div className="flex">
+          <Input
+            type="text"
+            placeholder="Search events by name"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="border p-2 mr-2"
+          />
+          {/* <Button onClick={handleSearchClick} variant="outline">
+            Search
+          </Button> */}
+        </div>
+        <div>
           <Sort onSortChange={setSortOption} />
         </div>
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-3">
-        {sortedEvents?.map((event) => <EventItem key={event._id} {...event} />)}
+        {searchTerm
+          ? searchResults.map((event) => (
+              <EventItem key={event._id} {...event} />
+            ))
+          : sortedEvents.map((event) => (
+              <EventItem key={event._id} {...event} />
+            ))}
       </div>
     </>
   )

@@ -204,3 +204,14 @@ export const deleteEvent = mutation({
         await ctx.db.delete(args.eventId)
     }
 })
+
+export const searchEventsByName = query({
+    args: {
+        name: v.string(),
+    },
+    async handler(ctx, args) {
+        return ctx.db.query("events")
+            .withSearchIndex("search_name", q => q.search("name", args.name))
+            .collect();
+    }
+});

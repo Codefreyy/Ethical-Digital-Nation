@@ -24,6 +24,8 @@ export default defineSchema({
         creatorId: v.string(),
         link: v.optional(v.string()),
         isContactPublic: v.boolean(),
+    }).searchIndex("search_name", {
+        searchField: "name",
     }),
     event_participants: defineTable({
         eventId: v.id('events'),
