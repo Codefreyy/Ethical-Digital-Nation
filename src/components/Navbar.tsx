@@ -50,7 +50,9 @@ export const Navbar = () => {
             {/* <Link className="hover:underline" href="/profile">
               {shownName}
             </Link> */}
-            <Link href="/personal-center">Personal Center</Link>
+            <Link className="hover:underline" href="/personal-center">
+              Personal Center
+            </Link>
             <UserButton />
           </SignedIn>
         </div>
