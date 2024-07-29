@@ -117,7 +117,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message,
+        description: "You should login to show interest in this event",
         variant: "destructive",
         duration: 2000,
       })
