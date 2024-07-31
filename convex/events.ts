@@ -41,6 +41,7 @@ export const getEventDetails = query({
     async handler(ctx, args) {
         const identity = await ctx.auth.getUserIdentity();
         let user: any
+        let creator = null
         const event = await ctx.db.get(args.eventId);
         if (!event) {
             return { error: "event_not_found" };
@@ -58,21 +59,31 @@ export const getEventDetails = query({
             if (!user) {
                 return { error: "user_not_found" };
             }
+
+            const isCreator = event.creatorId.split("|")[1] === user.tokenIdentifier.split("|")[1];
+            const creatorIdentifier = event.creatorId.startsWith("https://undefined|") ? event.creatorId : `https://undefined|${event.creatorId.split("|")[1]}`;
+            creator = await ctx.db.query("users")
+                .filter(q => q.eq(q.field("tokenIdentifier"), creatorIdentifier))
+                .first();
+
             const participants = await ctx.db.query("event_participants")
                 .filter(q => q.eq(q.field("eventId"), args.eventId))
                 .collect();
 
-            const isCreator = event.creatorId.split("|")[1] === user.tokenIdentifier.split("|")[1];
             const hasJoined = participants.some((participant: any) => {
                 return participant.userId === user._id
             });
+
+
+            console.log('event creator Id', event.creatorId, creator, isCreator)
+            console.log('user', user)
 
 
             return {
                 event,
                 isCreator,
                 hasJoined,
-                creator: event.isContactPublic ? user : null // 根据是否公开返回创建者信息
+                creator: event.isContactPublic ? creator : null // 根据是否公开返回创建者信息
             };
         }
 
@@ -80,7 +91,7 @@ export const getEventDetails = query({
             event,
             isCreator: null,
             hasJoined: null,
-            creator: event.isContactPublic ? user : null // 根据是否公开返回创建者信息
+            creator: event.isContactPublic ? creator : null // 根据是否公开返回创建者信息
         }
     }
 });
