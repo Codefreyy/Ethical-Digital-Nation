@@ -58,48 +58,63 @@ const ParticipantsTable = ({
     replyTo: "yp25@st-andrews.ac.uk",
   })
 
+  function handleSubmit(e: any) {
+    e.preventDefault()
+    const postData = async () => {
+      if (!emailContent.trim()) {
+        toast({
+          title: "Error",
+          description: "Email content cannot be empty.",
+          variant: "destructive",
+        })
+        return
+      }
+
+      const selectedParticipants = participants.filter(
+        (participant: Participant) => selectedRows.includes(participant?._id!)
+      )
+
+      const emailAddresses = selectedParticipants
+        .map((p: Participant) => p?.email)
+        .filter(Boolean)
+
+      if (emailAddresses.length === 0) {
+        toast({
+          title: "Error",
+          description: "No valid email addresses selected.",
+          variant: "destructive",
+        })
+        return
+      }
+
+      console.log("testintdasdasdasda")
+      const response = await fetch("/api/send-emails", {
+        method: "POST",
+        body: JSON.stringify({
+          to: emailAddresses,
+          replyTo: creator.email,
+          subject: "Event Update",
+          text: emailContent,
+          from: "onboarding@resend.dev", // TODO: change to verified email address later
+        }),
+      })
+      return response.json()
+    }
+    postData().then((data) => {
+      toast({
+              title: "Success",
+              description: "Emails sent successfully.",
+            })
+    })
+  }
+
   // const handleSendEmail = async () => {
   //   console.log("Preparing to send email...")
 
-  //   if (!emailContent.trim()) {
-  //     toast({
-  //       title: "Error",
-  //       description: "Email content cannot be empty.",
-  //       variant: "destructive",
-  //     })
-  //     return
-  //   }
-
-  //   const selectedParticipants = participants.filter(
-  //     (participant: Participant) => selectedRows.includes(participant?._id!)
-  //   )
-
-  //   const emailAddresses = selectedParticipants
-  //     .map((p: Participant) => p?.email)
-  //     .filter(Boolean)
-
-  //   if (emailAddresses.length === 0) {
-  //     toast({
-  //       title: "Error",
-  //       description: "No valid email addresses selected.",
-  //       variant: "destructive",
-  //     })
-  //     return
-  //   }
-
-  //   const result = await sendEmail({
-  //     to: emailAddresses,
-  //     replyTo: creator.email,
-  //     subject: "Event Update",
-  //     text: emailContent,
-  //     from: "onboarding@resend.dev", // TODO: change to verified email address later
-  //   })
+  //   const result = await sendEmail()
 
   //   if (result.success) {
-  //     toast({
-  //       title: "Success",
-  //       description: "Emails sent successfully.",
-  //     })
+  //    
   //     setIsDialogOpen(false)
   //   } else {
   //     toast({
@@ -217,6 +232,7 @@ const ParticipantsTable = ({
             <form action={sendEmailWithInfo}>
               <button
                 type="submit"
+                onClick={handleSubmit}
                 className="text-sm border border-gray-[#dfe4ed] rounded-md bg-black px-2 py-2 hover:bg-[#f0f3f8] hover:text-black text-white"
               >
                 Confirm Send
