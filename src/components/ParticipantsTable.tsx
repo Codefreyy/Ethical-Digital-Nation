@@ -38,10 +38,10 @@ export type Participants = Participant[]
 
 const ParticipantsTable = ({
   participants,
-  creator,
+  creatorEmail,
 }: {
   participants: any | Participants
-  creator: any
+  creatorEmail: string | undefined
 }) => {
   const [selectedRows, setSelectedRows] = useState<string[]>([])
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -50,13 +50,13 @@ const ParticipantsTable = ({
   const emailHtml = ReactDOMServer.renderToStaticMarkup(
     <ParticipantsEmail subject="Event Notification" content={emailContent} />
   )
-  const sendEmailWithInfo = sendEmail.bind(null, {
-    to: ["joyyujiepeng@gmail.com"],
-    from: "Acme <resend@resend.dev>",
-    subject: "Hello from Next.js",
-    text: emailContent,
-    replyTo: "yp25@st-andrews.ac.uk",
-  })
+  // const sendEmailWithInfo = sendEmail.bind(null, {
+  //   to: ["joyyujiepeng@gmail.com"],
+  //   from: "Acme <resend@resend.dev>",
+  //   subject: "Hello from Next.js",
+  //   text: emailContent,
+  //   replyTo: "yp25@st-andrews.ac.uk",
+  // })
 
   function handleSubmit(e: any) {
     e.preventDefault()
@@ -92,7 +92,7 @@ const ParticipantsTable = ({
         method: "POST",
         body: JSON.stringify({
           to: emailAddresses,
-          replyTo: creator.email,
+          replyTo: creatorEmail,
           subject: "Event Update",
           text: emailContent,
           from: "onboarding@resend.dev", // TODO: change to verified email address later
@@ -102,9 +102,9 @@ const ParticipantsTable = ({
     }
     postData().then((data) => {
       toast({
-              title: "Success",
-              description: "Emails sent successfully.",
-            })
+        title: "Success",
+        description: "Emails sent successfully.",
+      })
     })
   }
 
@@ -114,7 +114,7 @@ const ParticipantsTable = ({
   //   const result = await sendEmail()
 
   //   if (result.success) {
-  //    
+  //
   //     setIsDialogOpen(false)
   //   } else {
   //     toast({
@@ -229,15 +229,15 @@ const ParticipantsTable = ({
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               Cancel
             </Button>
-            <form action={sendEmailWithInfo}>
-              <button
-                type="submit"
-                onClick={handleSubmit}
-                className="text-sm border border-gray-[#dfe4ed] rounded-md bg-black px-2 py-2 hover:bg-[#f0f3f8] hover:text-black text-white"
-              >
-                Confirm Send
-              </button>
-            </form>
+            {/* <form > */}
+            <Button
+              type="submit"
+              onClick={handleSubmit}
+              // className="text-sm border border-gray-[#dfe4ed] rounded-md bg-black px-2 py-2 hover:bg-[#f0f3f8] hover:text-black text-white"
+            >
+              Confirm Send
+            </Button>
+            {/* </form> */}
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -74,6 +74,8 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
     eventId: eventId as Id<"events">,
   })
   const router = useRouter()
+  const currentUser = useQuery(api.users.getCurrentUser)
+  const currentUserEmail = currentUser?.email
 
   const event = useQuery(api.events.getEventDetails, {
     eventId: eventId as Id<"events">,
@@ -340,7 +342,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
           <>
             <Separator className="mt-4" />
             <h2 className="text-md font-semibold">Interested Users</h2>
-            <ParticipantsTable participants={participants} creator={creator} />
+            <ParticipantsTable participants={participants} creatorEmail={currentUserEmail} />
           </>
         )}
       </div>
