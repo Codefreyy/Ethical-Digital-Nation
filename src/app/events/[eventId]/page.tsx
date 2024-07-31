@@ -340,7 +340,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
           <>
             <Separator className="mt-4" />
             <h2 className="text-md font-semibold">Interested Users</h2>
-            <ParticipantsTable participants={participants} />
+            <ParticipantsTable participants={participants} creator={creator} />
           </>
         )}
       </div>

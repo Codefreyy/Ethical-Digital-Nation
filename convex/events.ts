@@ -74,11 +74,6 @@ export const getEventDetails = query({
                 return participant.userId === user._id
             });
 
-
-            console.log('event creator Id', event.creatorId, creator, isCreator)
-            console.log('user', user)
-
-
             return {
                 event,
                 isCreator,
