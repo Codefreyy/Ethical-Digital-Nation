@@ -1,11 +1,11 @@
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Montserrat } from "next/font/google"
 import "./globals.css"
 import ConvexClientProvider from "./ConvexClientProvider"
 import { Toaster } from "@/components/ui/toaster"
 import { Navbar } from "@/components/Navbar"
 
-const inter = Inter({ subsets: ["latin"] })
+const montserrat = Montserrat({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Ethical digital nation",
@@ -20,15 +20,13 @@ export default function RootLayout({
 }>) {
   return (
     <ConvexClientProvider>
-      <html lang="en">
-        <body className="min-h-screen">
+      <html lang="en" className={`${montserrat.className}`}>
+        <body className="min-h-screen bg-gray-50 text-gray-950 relative dark:bg-gray-900 dark:text-gray-50 dark:text-opacity-90">
+          <div className="bg-[#fffbfb] absolute top-[-6rem] -z-10 right-[11rem] h-[31.25rem] w-[31.25rem] rounded-full blur-[10rem] sm:w-[68.75rem] dark:hidden"></div>
+          <div className="bg-[#f9f8fc] absolute top-[-1rem] -z-10 left-[-35rem] h-[31.25rem] w-[50rem] rounded-full blur-[10rem] sm:w-[68.75rem] md:left-[-33rem] lg:left-[-28rem] xl:left-[-15rem] 2xl:left-[-5rem] dark:hidden"></div>
           <Toaster />
           <Navbar />
-          <main
-            className={`${inter.className}  h-full mx-auto mt-12 container`}
-          >
-            {children}
-          </main>
+          <main className={`h-full mx-auto mt-12 container`}>{children}</main>
         </body>
       </html>
     </ConvexClientProvider>

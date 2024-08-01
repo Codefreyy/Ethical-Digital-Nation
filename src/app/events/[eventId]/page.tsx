@@ -197,7 +197,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
         </BreadcrumbList>
       </Breadcrumb>
       <div className="flex justify-between w-full items-start">
-        <h1 className="sm:text-3xl text-2xl font-bold mb-4 text-gray-800">
+        <h1 className="sm:text-3xl text-2xl font-bold mb-4 text-gray-800 dark:text-gray-200">
           {name}
         </h1>
         {!isCreator && (
@@ -224,7 +224,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
           </div>
         )}
       </div>
-      <div className="flex flex-col gap-5 text-sm text-gray-600">
+      <div className="flex flex-col gap-5 text-sm text-gray-600 dark:text-gray-200 ">
         {isCreator && isEditing ? (
           <>
             <Label htmlFor="name">Event Name</Label>
@@ -279,7 +279,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
             </div>
           </>
         ) : (
-          <>
+          <div className="text-gray-600 dark:text-gray-200 flex flex-col gap-3">
             {creator && (
               <HoverCard>
                 <HoverCardTrigger asChild>
@@ -310,13 +310,13 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
             )}
             {!creator && <p>Created by: Anonymous</p>}
             {date && (
-              <div className="text-gray-600 flex gap-2">
+              <div className=" flex gap-2">
                 <CalendarClock className="w-4 h-4" />
                 {formatDate(date)}
               </div>
             )}
             {location && (
-              <div className=" text-gray-600 flex gap-2">
+              <div className="  flex gap-2">
                 <MapPin className="w-4 h-4" />
                 {location}
               </div>
@@ -327,15 +327,15 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
                 <a
                   href={link}
                   target="_blank"
-                  className=" text-gray-700 underline underline-offset-2 hover:no-underline"
+                  className=" underline underline-offset-2 hover:no-underline"
                 >
                   {" "}
                   {link}
                 </a>
               </div>
             )}
-            <div className=" text-gray-700 ">{description}</div>
-          </>
+            <div className=" ">{description}</div>
+          </div>
         )}
 
         {isCreator && participants && (

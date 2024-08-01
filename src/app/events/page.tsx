@@ -12,6 +12,7 @@ import {
   SelectTrigger,
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
+import { Search } from "lucide-react"
 
 type SortComponentType = {
   onSortChange: (value: string) => void
@@ -27,7 +28,6 @@ const sortTermDict: Record<string, string> = {
 // Sort component
 const Sort = ({ onSortChange }: SortComponentType) => {
   const handleSortChange = (value: string) => {
-    console.log("value", value)
     onSortChange(value)
     setSortTerm(sortTermDict[value])
   }
@@ -105,18 +105,19 @@ export default function Events() {
   return (
     <>
       <div className="flex justify-between items-center mb-8">
-        <h4 className="text-2xl font-semibold">Events</h4>
+        <h3 className="text-2xl font-semibold">Events</h3>
         <EventCreator />
       </div>
-      <div className="flex gap-5 justify-between items-center mb-8">
-        <div className="flex">
+      <div className="flex flex-col  gap-2 sm:flex-row sm:gap-5 sm:justify-between sm:items-center mb-8">
+        <div className="flex relative">
           <Input
             type="text"
             placeholder="Search events by name"
             value={searchTerm}
             onChange={handleSearchChange}
-            className="border p-2 mr-2"
+            className="border p-2"
           />
+          <Search className="w-4 h-4 absolute right-5 top-3 text-gray" />
           {/* <Button onClick={handleSearchClick} variant="outline">
             Search
           </Button> */}

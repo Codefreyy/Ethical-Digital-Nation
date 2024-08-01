@@ -32,26 +32,30 @@ export default function EventItem({
   console.log(date, location, creator)
   return (
     <Card
-      className="group hover:shadow-md cursor-pointer"
+      className="group hover:shadow-md cursor-pointer rounded-lg overflow-hidden"
       onClick={() => {
         router.push(`/events/${_id}`)
       }}
     >
       <CardHeader className="relative">
-        <CardTitle className="sm:text-xl text-lg ">{name}</CardTitle>
+        <CardTitle className="group-hover:text-pink-600 sm:text-lg text-md  ">
+          {name}
+        </CardTitle>
         <div className="absolute top-2 right-2">
           {/* <FileCardActions file={file} /> */}
         </div>
         <CardDescription>
-          <div>
+          <div className="text-gray-600 dark:text-gray-300">
             {location && (
-              <div className=" text-gray-600 flex gap-2 items-center">
+              <div className="  flex gap-2 items-center">
                 <MapPin className="w-4 h-4" />
-                {location}
+                <span className="whitespace-nowrap overflow-hidden text-ellipsis">
+                  {location}
+                </span>
               </div>
             )}
             {date && (
-              <div className="text-gray-600 flex gap-2 items-center">
+              <div className=" flex gap-2 items-center">
                 <CalendarClock className="w-4 h-4" />
                 {formatDate(date)}
               </div>
@@ -60,8 +64,9 @@ export default function EventItem({
         </CardDescription>
       </CardHeader>
 
-      <CardContent>
-        <p>{description}</p>
+      <CardContent className="relative max-h-24 overflow-hidden">
+        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-100% dark:from-gray-900 z-10"></div>
+        <p className="text-sm">{description}</p>
       </CardContent>
     </Card>
   )

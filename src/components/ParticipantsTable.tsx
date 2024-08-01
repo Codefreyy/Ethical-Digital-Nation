@@ -168,7 +168,7 @@ const ParticipantsTable = ({
     <div>
       <div className="flex justify-between mb-4">
         <Button
-          type="button"
+          variant="outline"
           onClick={() => setIsDialogOpen(true)}
           disabled={selectedRows.length === 0}
         >
@@ -214,11 +214,7 @@ const ParticipantsTable = ({
               Cancel
             </Button>
             {/* <form > */}
-            <Button
-              type="submit"
-              onClick={handleSubmit}
-              // className="text-sm border border-gray-[#dfe4ed] rounded-md bg-black px-2 py-2 hover:bg-[#f0f3f8] hover:text-black text-white"
-            >
+            <Button type="submit" onClick={handleSubmit}>
               Confirm Send
             </Button>
             {/* </form> */}

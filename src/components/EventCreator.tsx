@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/dialog"
 
 import { Button } from "./ui/button"
-import { Loader2 } from "lucide-react"
+import { Loader2, PencilLine } from "lucide-react"
 import { Textarea } from "./ui/textarea"
 import { api } from "../../convex/_generated/api"
 import { toast } from "./ui/use-toast"
@@ -93,6 +93,7 @@ export const EventCreator = () => {
               setIsCreateEventOpen(true)
             }}
           >
+            <PencilLine className="w-4 h-4 mr-2" />
             Create Event
           </Button>
         )}
