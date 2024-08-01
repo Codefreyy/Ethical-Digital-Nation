@@ -29,13 +29,16 @@ export const ParticipantsEmail = ({
         <Section style={section}>
           <Text style={text}>{content}</Text>
         </Section>
-        <Text style={links}>
-          <Link style={link}>Contact support</Link>
-        </Text>
 
         <Text style={footer}>
-          From Ethical Digital Nation Collaborative Web App · School of Computer
-          Science · University of St Andrews
+          From{" "}
+          <a
+            className="underline hover:no-underline"
+            target="_blank"
+            href="https://joy-clerk-auth.vercel.app/ "
+          >
+            Ethical Digital Nation Collaborative Web App
+          </a>
         </Text>
       </Container>
     </Body>
@@ -70,17 +73,9 @@ const section = {
 }
 
 const text = {
+  padding: "5px",
   margin: "0 0 10px 0",
   textAlign: "left" as const,
-}
-
-const links = {
-  textAlign: "center" as const,
-}
-
-const link = {
-  color: "#0366d6",
-  fontSize: "12px",
 }
 
 const footer = {

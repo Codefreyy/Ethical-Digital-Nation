@@ -16,7 +16,7 @@ import {
 } from "./ui/dialog"
 import { Textarea } from "./ui/textarea"
 import ParticipantsEmail from "./email-template"
-import { sendEmail } from "@/app/actions/sendEmail"
+import { Input } from "./ui/input"
 
 type Participant = {
   _id: string & {
@@ -46,17 +46,11 @@ const ParticipantsTable = ({
   const [selectedRows, setSelectedRows] = useState<string[]>([])
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [emailContent, setEmailContent] = useState("")
+  const [emailSubject, setEmailSubject] = useState("")
   const { toast } = useToast()
   const emailHtml = ReactDOMServer.renderToStaticMarkup(
-    <ParticipantsEmail subject="Event Notification" content={emailContent} />
+    <ParticipantsEmail subject={emailSubject} content={emailContent} />
   )
-  // const sendEmailWithInfo = sendEmail.bind(null, {
-  //   to: ["joyyujiepeng@gmail.com"],
-  //   from: "Acme <resend@resend.dev>",
-  //   subject: "Hello from Next.js",
-  //   text: emailContent,
-  //   replyTo: "yp25@st-andrews.ac.uk",
-  // })
 
   function handleSubmit(e: any) {
     e.preventDefault()
@@ -93,7 +87,7 @@ const ParticipantsTable = ({
         body: JSON.stringify({
           to: emailAddresses,
           replyTo: creatorEmail,
-          subject: "Event Update",
+          subject: emailSubject,
           text: emailContent,
           from: "onboarding@resend.dev", // TODO: change to verified email address later
         }),
@@ -107,23 +101,6 @@ const ParticipantsTable = ({
       })
     })
   }
-
-  // const handleSendEmail = async () => {
-  //   console.log("Preparing to send email...")
-
-  //   const result = await sendEmail()
-
-  //   if (result.success) {
-  //
-  //     setIsDialogOpen(false)
-  //   } else {
-  //     toast({
-  //       title: "Error",
-  //       description: "Failed to send emails.",
-  //       variant: "destructive",
-  //     })
-  //   }
-  // }
 
   const handleSelectAll = () => {
     if (selectedRows.length === participants?.length) {
@@ -203,8 +180,15 @@ const ParticipantsTable = ({
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Send Email to Participants</DialogTitle>
+            <DialogTitle>Write your email to the participants</DialogTitle>
           </DialogHeader>
+          <Input
+            placeholder="Enter the subject here..."
+            value={emailSubject}
+            onChange={(e) => {
+              setEmailSubject(e.target.value)
+            }}
+          />
           <Textarea
             value={emailContent}
             onChange={(e) => setEmailContent(e.target.value)}
