@@ -14,7 +14,7 @@ function DarkModeToggle() {
     // <div className="w-8 h-8 flex items-center">
     <button
       ref={togglerRef}
-      className=" dark:text-slate-500 hover:cursor-pointer"
+      className=" dark:text-slate-500 cursor-pointer"
       onClick={() => {
         handleToggleDarkMode() // when the button is clicked, toggle the dark mode state
       }}

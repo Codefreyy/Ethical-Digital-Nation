@@ -144,12 +144,7 @@ const ParticipantsTable = ({
       accessorKey: "name",
       cell: ({ row }) => (
         <div className="flex items-center">
-          <img
-            className="h-10 w-10 rounded-full"
-            src={row.original?.image}
-            alt=""
-          />
-          <span className="ml-4">{row.original?.name}</span>
+          <span>{row.original?.name}</span>
         </div>
       ),
     },

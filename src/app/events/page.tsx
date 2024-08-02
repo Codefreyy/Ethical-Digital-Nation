@@ -102,6 +102,11 @@ export default function Events() {
   const searchResults =
     useQuery(api.events.searchEventsByName, { name: searchTerm }) || []
 
+  // Combine search and sort results
+  const filteredResults = sortedEvents.filter((event) =>
+    searchResults.some((searchEvent) => searchEvent._id === event._id)
+  )
+
   return (
     <>
       <div className="flex justify-between items-center mb-8">
@@ -127,8 +132,8 @@ export default function Events() {
         </div>
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-3">
-        {searchTerm
-          ? searchResults.map((event) => (
+      {filteredResults.length > 0
+          ? filteredResults.map((event) => (
               <EventItem key={event._id} {...event} />
             ))
           : sortedEvents.map((event) => (

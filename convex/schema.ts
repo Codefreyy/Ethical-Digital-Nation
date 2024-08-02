@@ -24,6 +24,10 @@ export default defineSchema({
         creatorId: v.string(),
         link: v.optional(v.string()),
         isContactPublic: v.boolean(),
+        ratings: v.optional(v.array(v.object({
+            userId: v.id('users'),
+            rating: v.number(),
+        }))),
     }).searchIndex("search_name", {
         searchField: "name",
     }),

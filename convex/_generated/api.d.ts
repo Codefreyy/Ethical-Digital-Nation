@@ -18,6 +18,7 @@ import type * as clerk from "../clerk.js";
 import type * as events from "../events.js";
 import type * as files from "../files.js";
 import type * as http from "../http.js";
+import type * as ratings from "../ratings.js";
 import type * as users from "../users.js";
 
 /**
@@ -33,6 +34,7 @@ declare const fullApi: ApiFromModules<{
   events: typeof events;
   files: typeof files;
   http: typeof http;
+  ratings: typeof ratings;
   users: typeof users;
 }>;
 export declare const api: FilterApi<

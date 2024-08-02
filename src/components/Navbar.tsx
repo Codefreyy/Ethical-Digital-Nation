@@ -72,7 +72,7 @@ export const Navbar = () => {
                     <MenubarItem>
                       {" "}
                       <Link className="hover:underline" href="/personal-center">
-                        Personal Center
+                        Profile
                       </Link>
                     </MenubarItem>
                   </SignedIn>
@@ -98,7 +98,7 @@ export const Navbar = () => {
             </SignedOut>
             <SignedIn>
               <Link className="hover:underline" href="/personal-center">
-                Personal Center
+                Profile
               </Link>
               <UserButton />
             </SignedIn>

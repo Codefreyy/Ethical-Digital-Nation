@@ -3,7 +3,7 @@
 import { useMutation, useQuery } from "convex/react"
 import { api } from "../../../../convex/_generated/api"
 import { formatDate } from "@/lib/utils"
-import { CalendarClock, MapPin, BadgeInfo } from "lucide-react"
+import { CalendarClock, MapPin, BadgeInfo, Star, Users } from "lucide-react"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -37,6 +37,7 @@ import { Label } from "@/components/ui/label"
 import ParticipantsTable from "@/components/ParticipantsTable"
 import { Separator } from "@/components/ui/separator"
 import { debounce } from "lodash"
+import RatingComponent from "@/components/RatingComponent"
 
 type EventPageProps = {
   params: {
@@ -78,6 +79,9 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
   const currentUserEmail = currentUser?.email
 
   const event = useQuery(api.events.getEventDetails, {
+    eventId: eventId as Id<"events">,
+  })
+  const generalRating = useQuery(api.ratings.getAverageRating, {
     eventId: eventId as Id<"events">,
   })
 
@@ -196,6 +200,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
+
       <div className="flex justify-between w-full items-start">
         <h1 className="sm:text-3xl text-2xl font-bold mb-4 text-gray-800 dark:text-gray-200">
           {name}
@@ -207,20 +212,30 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
         )}
         {isCreator && !isEditing && (
           <div className="flex justify-end items-center gap-2">
-            <Button variant="secondary" onClick={handleEditEvent}>
+            <Button size="sm" variant="secondary" onClick={handleEditEvent}>
               Edit
             </Button>
-            <Button variant="destructive" onClick={() => setIsDialogOpen(true)}>
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={() => setIsDialogOpen(true)}
+            >
               Delete
             </Button>
           </div>
         )}
         {isCreator && isEditing && (
           <div className="flex justify-end items-center gap-2">
-            <Button variant="outline" onClick={() => setIsEditing(false)}>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setIsEditing(false)}
+            >
               Cancel
             </Button>
-            <Button onClick={handleSaveEvent}>Save</Button>
+            <Button size="sm" onClick={handleSaveEvent}>
+              Save
+            </Button>
           </div>
         )}
       </div>
@@ -338,6 +353,25 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
           </div>
         )}
 
+        <div className="flex justify-between items-center mb-2 ">
+          <div className="flex flex-col text-gray-500">
+            <span className="font-semibold">
+              Credability: {generalRating?.averageRating} / 5
+            </span>
+            <div className="flex gap-3">
+              <Users className="w-5 h-5" />
+              <span className="text-sm">
+                Rated by {generalRating?.totalRatings} users
+              </span>
+            </div>
+          </div>
+
+          <RatingComponent
+            title={"Your rating:"}
+            eventId={eventId as Id<"events">}
+            userId={currentUser?._id as Id<"users">}
+          />
+        </div>
         {isCreator && participants && (
           <>
             <Separator className="mt-4" />
