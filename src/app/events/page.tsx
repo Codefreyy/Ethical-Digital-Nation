@@ -12,7 +12,8 @@ import {
   SelectTrigger,
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
-import { Search } from "lucide-react"
+import { Search, User } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
 
 type SortComponentType = {
   onSortChange: (value: string) => void
@@ -56,20 +57,48 @@ export default function Events() {
   const [searchTerm, setSearchTerm] = useState("")
   const [sortedEvents, setSortedEvents] = useState(events || [])
   const [sortOption, setSortOption] = useState("createTimeDesc")
+  const [showUserEvents, setShowUserEvents] = useState(false)
+  const currentUser = useQuery(api.users.getCurrentUser)
 
+  // Handle sorting
   useEffect(() => {
-    console.log("sortOption", sortOption)
+    console.log("hello")
     if (events) {
-      let sorted = [...events]
+      let filteredEvents = [...events]
+      console.log("filteredEvents", filteredEvents)
+
+      // Filter by user-created events if toggle is on
+      if (showUserEvents && currentUser) {
+        filteredEvents = filteredEvents.filter((event) => {
+          console.log(
+            "event",
+            event.creatorId.split("|")[1],
+            currentUser._id.split("|")[1]
+          )
+          return (
+            event.creatorId.split("|").pop() ===
+            currentUser.tokenIdentifier.split("|")[1]
+          )
+        })
+      }
+
+      // Handle search
+      if (searchTerm) {
+        filteredEvents = filteredEvents.filter((event) =>
+          event.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      }
+
+      // Handle sorting
       switch (sortOption) {
         case "createTimeDesc":
-          sorted.sort((a, b) => b._creationTime - a._creationTime)
+          filteredEvents.sort((a, b) => b._creationTime - a._creationTime)
           break
         case "createTimeAsc":
-          sorted.sort((a, b) => a._creationTime - b._creationTime)
+          filteredEvents.sort((a, b) => a._creationTime - b._creationTime)
           break
         case "startTimeDesc":
-          sorted.sort((a, b) => {
+          filteredEvents.sort((a, b) => {
             const dateA = new Date(a.date ?? 0).getTime()
             const dateB = new Date(b.date ?? 0).getTime()
             if (!dateA) return 1
@@ -78,7 +107,7 @@ export default function Events() {
           })
           break
         case "startTimeAsc":
-          sorted.sort((a, b) => {
+          filteredEvents.sort((a, b) => {
             const dateA = new Date(a.date ?? 0).getTime()
             const dateB = new Date(b.date ?? 0).getTime()
             if (!dateA) return 1
@@ -89,9 +118,10 @@ export default function Events() {
         default:
           break
       }
-      setSortedEvents(sorted)
+
+      setSortedEvents(filteredEvents)
     }
-  }, [events, sortOption])
+  }, [events, sortOption, searchTerm, showUserEvents, currentUser])
 
   const handleSearchChange = (e: {
     target: { value: SetStateAction<string> }
@@ -99,46 +129,42 @@ export default function Events() {
     setSearchTerm(e.target.value)
   }
 
-  const searchResults =
-    useQuery(api.events.searchEventsByName, { name: searchTerm }) || []
-
-  // Combine search and sort results
-  const filteredResults = sortedEvents.filter((event) =>
-    searchResults.some((searchEvent) => searchEvent._id === event._id)
-  )
-
   return (
     <>
       <div className="flex justify-between items-center mb-8">
         <h3 className="text-2xl font-semibold">Events</h3>
         <EventCreator />
       </div>
-      <div className="flex flex-col  gap-2 sm:flex-row sm:gap-5 sm:justify-between sm:items-center mb-8">
-        <div className="flex relative">
+      <div className="flex flex-col sm:flex-row sm:gap-5 sm:justify-between sm:items-center mb-8">
+        <div className="relative flex items-center space-x-2">
           <Input
             type="text"
             placeholder="Search events by name"
             value={searchTerm}
             onChange={handleSearchChange}
-            className="border p-2"
+            className="border p-2 relative z-10"
           />
-          <Search className="w-4 h-4 absolute right-5 top-3 text-gray" />
-          {/* <Button onClick={handleSearchClick} variant="outline">
-            Search
-          </Button> */}
+          <Search className="w-4 h-4 absolute right-5 top-3 text-gray-500 z-20" />
         </div>
-        <div>
+        <div className="flex items-center gap-2">
           <Sort onSortChange={setSortOption} />
+
+          {currentUser && (
+            <div className="flex items-center gap-2">
+              <Switch
+                className=""
+                checked={showUserEvents}
+                onCheckedChange={setShowUserEvents}
+              />
+              <span className="text-xs no-wrap">My Events</span>
+            </div>
+          )}
         </div>
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-3">
-      {filteredResults.length > 0
-          ? filteredResults.map((event) => (
-              <EventItem key={event._id} {...event} />
-            ))
-          : sortedEvents.map((event) => (
-              <EventItem key={event._id} {...event} />
-            ))}
+        {sortedEvents.map((event) => (
+          <EventItem key={event._id} {...event} />
+        ))}
       </div>
     </>
   )
