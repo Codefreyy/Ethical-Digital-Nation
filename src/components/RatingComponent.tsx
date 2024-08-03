@@ -16,7 +16,6 @@ const RatingComponent = ({
   className?: string
   title?: string
 }) => {
-  console.log("eventId", eventId, "userI", userId)
   const [userRating, setUserRating] = useState(0)
   const [hover, setHover] = useState(0)
   const submitRating = useMutation(api.ratings.submitRating)
@@ -45,7 +44,6 @@ const RatingComponent = ({
         return
       }
       const res = await submitRating({ eventId, rating: ratingValue, userId })
-      console.log("res", res)
       setUserRating(ratingValue)
       toast({
         title: "Success",
@@ -61,6 +59,12 @@ const RatingComponent = ({
       })
     }
   }
+
+  const handleKeyDown = (event: React.KeyboardEvent, ratingValue: number) => {
+    if (event.key === 'Enter') {
+      handleRatingSubmit(ratingValue);
+    }
+  }
   return (
     <div className="flex flex-col gap-1">
       <div>{title}</div>
@@ -68,7 +72,7 @@ const RatingComponent = ({
         {Array.from({ length: 5 }, (star, i) => {
           const ratingValue = i + 1
           return (
-            <label>
+            <label key={i}>
               <input
                 className="hidden"
                 type="radio"
@@ -78,11 +82,13 @@ const RatingComponent = ({
                 }}
               />
               <Star
+                tabIndex={0}
                 className="w-4 h-4 cursor-pointer "
                 fill={ratingValue <= (hover || userRating) ? "#FFD700" : "none"}
                 strokeWidth={1}
                 onMouseEnter={() => setHover(ratingValue)}
                 onMouseLeave={() => setHover(0)}
+                onKeyDown={(event) => handleKeyDown(event, ratingValue)}
               />
             </label>
           )

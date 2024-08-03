@@ -14,6 +14,15 @@ import {
 import { Input } from "@/components/ui/input"
 import { Search, User } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 
 type SortComponentType = {
   onSortChange: (value: string) => void
@@ -62,19 +71,12 @@ export default function Events() {
 
   // Handle sorting
   useEffect(() => {
-    console.log("hello")
     if (events) {
       let filteredEvents = [...events]
-      console.log("filteredEvents", filteredEvents)
 
       // Filter by user-created events if toggle is on
       if (showUserEvents && currentUser) {
         filteredEvents = filteredEvents.filter((event) => {
-          console.log(
-            "event",
-            event.creatorId.split("|")[1],
-            currentUser._id.split("|")[1]
-          )
           return (
             event.creatorId.split("|").pop() ===
             currentUser.tokenIdentifier.split("|")[1]
@@ -131,41 +133,73 @@ export default function Events() {
 
   return (
     <>
-      <div className="flex justify-between items-center mb-8">
-        <h3 className="text-2xl font-semibold">Events</h3>
-        <EventCreator />
-      </div>
-      <div className="flex flex-col sm:flex-row sm:gap-5 sm:justify-between sm:items-center mb-8">
-        <div className="relative flex items-center space-x-2">
-          <Input
-            type="text"
-            placeholder="Search events by name"
-            value={searchTerm}
-            onChange={handleSearchChange}
-            className="border p-2 relative z-10"
-          />
-          <Search className="w-4 h-4 absolute right-5 top-3 text-gray-500 z-20" />
-        </div>
-        <div className="flex items-center gap-2">
-          <Sort onSortChange={setSortOption} />
+      <Breadcrumb className="mb-8">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator aria-hidden="true" />
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/events">Events</BreadcrumbLink>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
 
-          {currentUser && (
-            <div className="flex items-center gap-2">
-              <Switch
-                className=""
-                checked={showUserEvents}
-                onCheckedChange={setShowUserEvents}
-              />
-              <span className="text-xs no-wrap">My Events</span>
-            </div>
-          )}
+      <section aria-labelledby="events-section">
+        <div className="flex justify-between items-center mb-8">
+          <h3 className="text-2xl font-semibold">Events</h3>
+          <EventCreator />
         </div>
-      </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-3">
-        {sortedEvents.map((event) => (
-          <EventItem key={event._id} {...event} />
-        ))}
-      </div>
+        <div className="flex flex-col justify-items-start sm:flex-row sm:gap-5 sm:justify-between sm:items-center mb-8 gap-2">
+          <div className="relative flex items-center">
+            <Label htmlFor="search-events" className="sr-only hidden">
+              Search events by name
+            </Label>
+            <Input
+              id="search-events"
+              type="text"
+              placeholder="Search events by name"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="border p-2 relative z-10"
+              aria-label="Search events by name"
+            />
+            <Search
+              className="w-4 h-4 absolute right-5 top-3 text-gray-500 z-20"
+              aria-hidden="true"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <Sort onSortChange={setSortOption} />
+
+            {currentUser && (
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="show-user-events"
+                  defaultChecked={showUserEvents}
+                  checked={showUserEvents}
+                  onCheckedChange={() => {
+                    setShowUserEvents(!showUserEvents)
+                  }}
+                  aria-labelledby="label-show-user-events"
+                />
+                <Label
+                  id="label-show-user-events"
+                  htmlFor="only view my events"
+                  className="text-gray-600 dark:text-gray-200"
+                >
+                  Only view my events
+                </Label>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 grid-cols-1 gap-3">
+          {sortedEvents.map((event) => (
+            <EventItem key={event._id} {...event} />
+          ))}
+        </div>
+      </section>
     </>
   )
 }

@@ -63,7 +63,6 @@ export const updateUserProfile = mutation({
         });
 
         const updatedUser = await ctx.db.get(user._id);
-        console.log(updatedUser, "updatedUser");
 
         return {
             status: "success",

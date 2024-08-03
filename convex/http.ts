@@ -22,7 +22,6 @@ http.route({
                     "svix-signature": headerPayload.get("svix-signature")!,
                 },
             });
-            console.log(result, "result");
             switch (result.type) {
                 case "user.created":
                     await ctx.runMutation(internal.users.createUser, {
@@ -33,15 +32,6 @@ http.route({
                         email: result.data.email_addresses[0].email_address,
                     });
                     break;
-                // case "user.updated":
-                //     await ctx.runMutation(internal.users.updateUser, {
-                //         tokenIdentifier: `https://${process.env.CLERK_HOSTNAME}|${result.data.id}`,
-                //         name: `${result.data.first_name ?? ""} ${result.data.last_name ?? ""
-                //             }`,
-                //         image: result.data.image_url,
-                //     });
-                //     break;
-
             }
 
             return new Response(null, {

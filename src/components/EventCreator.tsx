@@ -155,7 +155,7 @@ export const EventCreator = () => {
                     <FormItem>
                       <FormLabel>Date(optional)</FormLabel>
                       <FormControl>
-                        <Input {...field} type="datetime-local" />
+                        <Input {...field} type="date" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

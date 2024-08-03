@@ -244,6 +244,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
           <>
             <Label htmlFor="name">Event Name</Label>
             <Input
+              id="name"
               value={updatedEvent.name}
               onChange={(e) =>
                 setUpdatedEvent({ ...updatedEvent, name: e.target.value })
@@ -251,7 +252,8 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
             />
             <Label htmlFor="date">Date(optional)</Label>
             <Input
-              type="datetime-local"
+             id="name"
+              type="date"
               value={updatedEvent.date}
               onChange={(e) =>
                 setUpdatedEvent({ ...updatedEvent, date: e.target.value })
@@ -260,6 +262,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
             <Label htmlFor="date">Location(optional)</Label>
 
             <Input
+            id="location"
               value={updatedEvent.location}
               onChange={(e) =>
                 setUpdatedEvent({ ...updatedEvent, location: e.target.value })
@@ -268,6 +271,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
             <Label htmlFor="date">Description</Label>
 
             <Textarea
+              id="description"
               value={updatedEvent.description}
               onChange={(e) =>
                 setUpdatedEvent({
@@ -278,6 +282,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
             />
             <Label htmlFor="date">Link(optional)</Label>
             <Input
+               id="link"
               value={updatedEvent.link}
               onChange={(e) =>
                 setUpdatedEvent({ ...updatedEvent, link: e.target.value })
@@ -289,21 +294,23 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
                 onCheckedChange={(checked) =>
                   setUpdatedEvent({ ...updatedEvent, isContactPublic: checked })
                 }
+                 aria-labelledby="isContactPublic-label"
               />
-              <label className="ml-2">Share your contact for this event?</label>
+              <label id="isContactPublic-label" htmlFor="isContactPublic" className="ml-2">Share your contact for this event?</label>
             </div>
           </>
         ) : (
           <div className="text-gray-600 dark:text-gray-200 flex flex-col gap-3">
             {creator && (
               <HoverCard>
-                <HoverCardTrigger asChild>
-                  <div className="flex gap-2 items-center underline hover:no-underline underline-offset-2 cursor-pointer">
+                <HoverCardTrigger asChild tabIndex={0}>
+                  <div className="flex gap-2 items-center underline hover:no-underline underline-offset-2 cursor-pointer"
+                   aria-describedby="creator-info">
                     <BadgeInfo className="w-4 h-4" /> Event Creator:{" "}
                     {creator.username || ""}
                   </div>
                 </HoverCardTrigger>
-                <HoverCardContent className="w-80">
+                <HoverCardContent id="creator-info" className="w-80">
                   <div className="flex space-x-4">
                     <div className="space-y-1">
                       <h4 className="text-sm font-semibold">
@@ -342,6 +349,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
                 <a
                   href={link}
                   target="_blank"
+                   rel="noopener noreferrer"
                   className=" underline underline-offset-2 hover:no-underline"
                 >
                   {" "}
@@ -349,7 +357,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
                 </a>
               </div>
             )}
-            <div className=" ">{description}</div>
+            <div >{description}</div>
           </div>
         )}
 

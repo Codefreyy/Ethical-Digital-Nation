@@ -17,14 +17,14 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/use-toast"
 
-const PersonalCenter = () => {
+const Profile = () => {
   const { user, isLoaded } = useUser()
   const [username, setUsername] = useState("")
   const [role, setRole] = useState("")
   const [organization, setOrganization] = useState("")
   const [bio, setBio] = useState("")
   const [researchInterests, setResearchInterests] = useState("")
-  const [isEditing, setIsEditing] = useState(false) // 新增状态用于编辑模式
+  const [isEditing, setIsEditing] = useState(false)
   const updateUserProfile = useMutation(api.users.updateUserProfile)
 
   const currentUser = useQuery(api.users.getCurrentUser)
@@ -72,8 +72,14 @@ const PersonalCenter = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Profile</h1>
+    <div
+      className="max-w-5xl mx-auto"
+      role="main"
+      aria-labelledby="profile-heading"
+    >
+      <h1 id="profile-heading" className="text-2xl font-bold mb-4">
+        Profile
+      </h1>
       {isEditing ? (
         <>
           <div className="mb-4">
@@ -84,11 +90,16 @@ const PersonalCenter = () => {
               value={username}
               placeholder="Username"
               onChange={(e) => setUsername(e.target.value)}
+              aria-required="true"
             />
           </div>
           <div className="mb-4">
             <Label htmlFor="role">Role:</Label>
-            <Select value={role} onValueChange={(value) => setRole(value)}>
+            <Select
+              value={role}
+              onValueChange={(value) => setRole(value)}
+              aria-labelledby="role-label"
+            >
               <SelectTrigger id="role">
                 <SelectValue placeholder="Select a role" />
               </SelectTrigger>
@@ -110,6 +121,7 @@ const PersonalCenter = () => {
               value={organization}
               placeholder="Organization"
               onChange={(e) => setOrganization(e.target.value)}
+              aria-required="false"
             />
           </div>
           <div className="mb-4">
@@ -119,6 +131,7 @@ const PersonalCenter = () => {
               value={bio}
               placeholder="Bio"
               onChange={(e) => setBio(e.target.value)}
+              aria-required="false"
             />
           </div>
           <div className="mb-4">
@@ -128,6 +141,7 @@ const PersonalCenter = () => {
               value={researchInterests}
               placeholder="Research Interests"
               onChange={(e) => setResearchInterests(e.target.value)}
+              aria-required="false"
             />
           </div>
           <div className="flex justify-start gap-2 items-center">
@@ -140,26 +154,24 @@ const PersonalCenter = () => {
       ) : (
         <>
           <div className="mb-4">
-            <Label className="font-semibold text-gray-700">Username:</Label>
-            <p className="text-gray-900">{username}</p>
+            <Label className="font-semibold">Username:</Label>
+            <p>{username}</p>
           </div>
           <div className="mb-4">
-            <Label className="font-semibold text-gray-700">Role:</Label>
-            <p className="text-gray-900">{role}</p>
+            <Label className="font-semibold">Role:</Label>
+            <p>{role}</p>
           </div>
           <div className="mb-4">
-            <Label className="font-semibold text-gray-700">Organization:</Label>
-            <p className="text-gray-900">{organization}</p>
+            <Label className="font-semibold">Organization:</Label>
+            <p>{organization}</p>
           </div>
           <div className="mb-4">
-            <Label className="font-semibold text-gray-700">Bio:</Label>
-            <p className="text-gray-900">{bio}</p>
+            <Label className="font-semibold">Bio:</Label>
+            <p>{bio}</p>
           </div>
           <div className="mb-4">
-            <Label className="font-semibold text-gray-700">
-              Research Interests:
-            </Label>
-            <p className="text-gray-900">{researchInterests}</p>
+            <Label className="font-semibold">Research Interests:</Label>
+            <p>{researchInterests}</p>
           </div>
           <div className="flex justify-between items-center">
             <Button onClick={() => setIsEditing(true)}>Edit</Button>
@@ -170,4 +182,4 @@ const PersonalCenter = () => {
   )
 }
 
-export default PersonalCenter
+export default Profile

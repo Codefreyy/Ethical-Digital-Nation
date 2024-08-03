@@ -15,15 +15,13 @@ import { useQuery } from "convex/react"
 import { Menu, TreePalm } from "lucide-react"
 import DarkModeToggle from "./DarkModeToggle"
 import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarTrigger,
-} from "./ui/menubar"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+} from "./ui/dropdown-menu"
 
 export const Navbar = () => {
-  // const { isSignedIn } = useAuth()
   let shownName = null
   const user = useUser()
   try {
@@ -38,54 +36,65 @@ export const Navbar = () => {
   }
 
   return (
-    <header className="border-b sticky top-0 left-0 right-0 bg-white py-3 z-40 dark:bg-black dark:text-white">
+    <header
+      role="banner"
+      className="border-b sticky top-0 left-0 right-0 bg-white py-3 z-40 dark:bg-black dark:text-white"
+    >
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <TreePalm className="w-6 h-6" />
-          <Link href="/" className="font-bold text-lg hidden sm:block">
+          <Link href="/">
+            <TreePalm className="w-6 h-6" />
+          </Link>
+          <Link href="/" className="font-medium text-lg hidden sm:block ">
             Ethical Digital Nation
           </Link>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex flex-col sm:hidden">
-            <Menubar>
-              <MenubarMenu>
-                <MenubarTrigger className="border-none">
-                  {" "}
-                  <Menu className="w-4 h-4" />
-                </MenubarTrigger>
-                <MenubarContent>
-                  <MenubarItem>
-                    <Link href="/events" className="hover:underline">
-                      Events
-                    </Link>
-                  </MenubarItem>
-                  <SignedOut>
-                    <MenubarItem>
-                      {" "}
-                      <SignInButton>
-                        <Button>Sign In</Button>
-                      </SignInButton>
-                    </MenubarItem>
-                  </SignedOut>
-                  <SignedIn>
-                    <MenubarItem>
-                      {" "}
-                      <Link className="hover:underline" href="/personal-center">
-                        Profile
-                      </Link>
-                    </MenubarItem>
-                  </SignedIn>
+        <nav className="flex items-center gap-4" aria-label="Main Navigation">
+          <div className=" sm:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                className="border-none"
+                aria-label="Main Menu"
+                tabIndex={0}
+                // onKeyDown={handleKeyDown}
+              >
+                <Menu className="w-4 h-4 cursor-pointer" aria-hidden="true" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className="flex flex-col items-start"
+                tabIndex={0}
+              >
+                <DropdownMenuItem asChild>
+                  <Link href="/events" className="hover:underline" tabIndex={0}>
+                    Events
+                  </Link>
+                </DropdownMenuItem>
 
-                  <MenubarItem>
-                    {" "}
-                    <div>
-                      <DarkModeToggle />
-                    </div>
-                  </MenubarItem>
-                </MenubarContent>
-              </MenubarMenu>
-            </Menubar>
+                <SignedOut>
+                  <DropdownMenuItem asChild>
+                    <SignInButton>
+                      <Button aria-label="Sign In" tabIndex={0}>
+                        Sign In
+                      </Button>
+                    </SignInButton>
+                  </DropdownMenuItem>
+                </SignedOut>
+                <SignedIn>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      tabIndex={0}
+                      className="hover:underline"
+                      href="/profile"
+                    >
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                </SignedIn>
+                <DropdownMenuItem asChild>
+                <DarkModeToggle />
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <div className="hidden sm:flex items-center gap-4">
             <Link href="/events" className="hover:underline">
@@ -93,19 +102,18 @@ export const Navbar = () => {
             </Link>
             <SignedOut>
               <SignInButton>
-                <Button>Sign In</Button>
+                <Button aria-label="Sign In">Sign In</Button>
               </SignInButton>
             </SignedOut>
             <SignedIn>
-              <Link className="hover:underline" href="/personal-center">
+              <Link className="hover:underline" href="/profile">
                 Profile
               </Link>
-              <UserButton />
+              <UserButton aria-label="User Menu" />
             </SignedIn>
-
             <DarkModeToggle />
           </div>
-        </div>
+        </nav>
       </div>
     </header>
   )

@@ -29,18 +29,25 @@ export default function EventItem({
   creator?: string
 }) {
   const router = useRouter()
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter") {
+      router.push(`/events/${_id}`)
+    }
+  }
   return (
     <Card
       className="group hover:shadow-md cursor-pointer rounded-lg overflow-hidden"
       onClick={() => {
         router.push(`/events/${_id}`)
       }}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
     >
       <CardHeader className="relative">
         <CardTitle className="group-hover:text-pink-600 sm:text-lg text-md  ">
           {name}
         </CardTitle>
-        <div className="text-gray-600 dark:text-gray-300">
+        <div className="text-gray-600 dark:text-gray-300 text-xs flex flex-col gap-2">
           {location && (
             <div className="  flex gap-2 items-center">
               <MapPin className="w-4 h-4" />

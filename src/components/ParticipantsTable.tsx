@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useRef, useEffect } from "react"
 import ReactDOMServer from "react-dom/server"
 import { ColumnDef } from "@tanstack/react-table"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -51,6 +51,13 @@ const ParticipantsTable = ({
   const emailHtml = ReactDOMServer.renderToStaticMarkup(
     <ParticipantsEmail subject={emailSubject} content={emailContent} />
   )
+  const sendEmailButtonRef = useRef<HTMLButtonElement | null>(null)
+
+  useEffect(() => {
+    if (selectedRows.length > 0 && sendEmailButtonRef.current) {
+      sendEmailButtonRef.current.focus() // 当按钮启用时，将焦点设置到按钮上
+    }
+  }, [selectedRows]) // 监听selectedRows的变化
 
   function handleSubmit(e: any) {
     e.preventDefault()
@@ -81,7 +88,6 @@ const ParticipantsTable = ({
         return
       }
 
-      console.log("testintdasdasdasda")
       const response = await fetch("/api/send-emails", {
         method: "POST",
         body: JSON.stringify({
@@ -123,6 +129,11 @@ const ParticipantsTable = ({
       id: "select",
       header: ({ table }) => (
         <Checkbox
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSelectAll()
+            }
+          }}
           checked={selectedRows.length === participants.length}
           onCheckedChange={handleSelectAll}
         />
@@ -130,6 +141,11 @@ const ParticipantsTable = ({
       cell: ({ row }) => {
         return (
           <Checkbox
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSelectRow(row.original?._id!)
+              }
+            }}
             checked={selectedRows.includes(row.original?._id!)}
             onCheckedChange={() => {
               handleSelectRow(row.original?._id!)
@@ -166,6 +182,7 @@ const ParticipantsTable = ({
           variant="outline"
           onClick={() => setIsDialogOpen(true)}
           disabled={selectedRows.length === 0}
+          ref={sendEmailButtonRef}
         >
           Send Email
         </Button>
