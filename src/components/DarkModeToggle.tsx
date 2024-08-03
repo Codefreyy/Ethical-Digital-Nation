@@ -7,18 +7,19 @@ const DarkModeToggle = forwardRef<HTMLButtonElement>((props, ref) => {
   console.log("theme", theme)
   return (
     <button
+      tabIndex={0}
       ref={ref} // Use the forwarded ref here
       className="dark:text-slate-500 cursor-pointer"
       onClick={() => {
         toggleTheme()
       }}
-      onKeyDown={(e) => {
-        e.stopPropagation()
-        console.log("keydown", e.key)
-        if (e.key === "Enter") {
-          toggleTheme() // when the button is clicked, toggle the dark mode state
-        }
-      }}
+      // onKeyDown={(e) => {
+      //   e.stopPropagation()
+      //   console.log("keydown", e.key)
+      //   if (e.key === "Enter") {
+      //     toggleTheme() // when the button is clicked, toggle the dark mode state
+      //   }
+      // }}
       {...props} // Spread any additional props (important for asChild)
     >
       {theme == "dark" ? (

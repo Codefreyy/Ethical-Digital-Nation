@@ -181,6 +181,11 @@ export default function Events() {
                   onCheckedChange={() => {
                     setShowUserEvents(!showUserEvents)
                   }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setShowUserEvents(!showUserEvents)
+                    }
+                  }}
                   aria-labelledby="label-show-user-events"
                 />
                 <Label
