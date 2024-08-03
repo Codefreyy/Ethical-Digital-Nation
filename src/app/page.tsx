@@ -13,14 +13,14 @@ export default async function Home() {
             id="hero-heading"
             className="text-4xl font-bold mb-4 tracking-tight"
           >
-            Building trust in the digital era: achieving Scotland's aspirations
-            as an ethical digital nation
+            Building trust in the digital era: achieving Scotland&apos;s
+            aspirations as an ethical digital nation
           </h1>
           <p
             className="text-md mb-8 mx-auto max-w-[50%]"
             aria-describedby="hero-description"
           >
-            Explore Scotland's vision for an ethical digital future, and
+            Explore Scotland&apos;s vision for an ethical digital future, and
             discover how we are building trust through technological innovation.
           </p>
           <a
