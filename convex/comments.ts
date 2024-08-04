@@ -97,3 +97,43 @@ export const getComments = query({
         return res;
     },
 });
+
+
+export const deleteComment = mutation({
+    args: {
+        commentId: v.id("comments"),
+        userId: v.id("users"),
+    },
+    handler: async (ctx, args) => {
+        const { commentId, userId } = args;
+
+        // 获取评论
+        const comment = await ctx.db.get(commentId);
+        if (!comment) {
+            throw new Error("Comment not found");
+        }
+
+        // 确认当前用户是评论的创建者
+        if (comment.userId !== userId) {
+            throw new Error("Unauthorized");
+        }
+
+        // 删除评论
+        await ctx.db.delete(commentId);
+
+        // 递归删除子评论
+        const deleteReplies = async (parentId: GenericId<"comments">) => {
+            const replies = await ctx.db
+                .query("comments")
+                .filter((q) => q.eq(q.field("parentId"), parentId))
+                .collect();
+
+            for (const reply of replies) {
+                await ctx.db.delete(reply._id);
+                await deleteReplies(reply._id);
+            }
+        };
+
+        await deleteReplies(commentId);
+    },
+});

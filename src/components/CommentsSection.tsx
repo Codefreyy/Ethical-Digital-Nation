@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { useMutation, useQuery } from "convex/react"
 import { api } from "../../convex/_generated/api"
 import { formatDistanceToNow } from "date-fns"
@@ -11,17 +11,40 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card"
 import { Separator } from "./ui/separator"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu"
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "./ui/alert-dialog"
 
 type CommentProp = {
   comment: any
   replies: any[]
   onReply: (parentId: string, content: string) => void
+  onDelete: (commentId: string) => void
+  currentUser: any
 }
 
 // 单个评论组件，显示评论内容及其子评论，并支持回复功能
-const Comment = ({ comment, replies, onReply }: CommentProp) => {
+const Comment = ({
+  comment,
+  replies,
+  onReply,
+  onDelete,
+  currentUser,
+}: CommentProp) => {
   const [replyContent, setReplyContent] = useState("")
   const [isReplying, setIsReplying] = useState(false)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   const handleReply = () => {
     onReply(comment._id, replyContent)
@@ -32,6 +55,14 @@ const Comment = ({ comment, replies, onReply }: CommentProp) => {
   const handleCancelReply = () => {
     setReplyContent("")
     setIsReplying(false)
+  }
+
+  const deleteComment = useMutation(api.comments.deleteComment)
+
+  const handleDelete = async () => {
+    await deleteComment({ commentId: comment._id, userId: currentUser._id })
+    onDelete(comment._id)
+    setIsDialogOpen(false)
   }
 
   return (
@@ -63,6 +94,46 @@ const Comment = ({ comment, replies, onReply }: CommentProp) => {
         <span className="text-gray-500 text-sm">
           {formatDistanceToNow(new Date(comment.createdAt))} ago
         </span>
+        {/* delete comment */}
+        {currentUser && currentUser._id === comment.userId && (
+          <>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm">
+                  •••
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => setIsDialogOpen(true)}>
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Confirm Delete</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to delete this comment? This action
+                    cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <Button variant="destructive" onClick={handleDelete}>
+                    Yes, Delete
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </>
+        )}
       </div>
       <p className="mt-2">{comment.content}</p>
       <div className="flex gap-2">
@@ -105,6 +176,8 @@ const Comment = ({ comment, replies, onReply }: CommentProp) => {
               comment={reply}
               replies={reply.replies}
               onReply={onReply}
+              currentUser={currentUser}
+              onDelete={onDelete}
             />
           ))}
         </div>
@@ -121,13 +194,18 @@ type CommentSectionProps = {
 // 评论区组件，用于展示评论列表并允许用户发表评论或回复
 const CommentsSection = ({ eventId, currentUser }: CommentSectionProps) => {
   const [newCommentContent, setNewCommentContent] = useState("")
-
-  // 使用 useQuery 从 Convex 获取当前事件的所有评论
-  const comments = useQuery(api.comments.getComments, {
+  const queryComment = useQuery(api.comments.getComments, {
     eventId: eventId as Id<"events">,
   })
+  console.log("queryComment", queryComment)
+  const [comments, setComments] = useState<any[]>([])
 
   console.log("comments", comments)
+  useEffect(() => {
+    if (queryComment) {
+      setComments(queryComment)
+    }
+  }, [queryComment])
 
   // 使用 useMutation 创建新的评论
   const createComment = useMutation(api.comments.createComment)
@@ -150,6 +228,9 @@ const CommentsSection = ({ eventId, currentUser }: CommentSectionProps) => {
       parentId,
       content,
     })
+  }
+  const handleDelete = (commentId: string) => {
+    setComments((comments ?? []).filter((comment) => comment._id !== commentId))
   }
 
   return (
@@ -176,6 +257,8 @@ const CommentsSection = ({ eventId, currentUser }: CommentSectionProps) => {
             comment={comment}
             replies={comment.replies}
             onReply={handleReply}
+            onDelete={handleDelete}
+            currentUser={currentUser}
           />
         ))}
     </div>

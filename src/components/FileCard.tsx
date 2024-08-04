@@ -34,6 +34,7 @@ import { useToast } from "./ui/use-toast"
 export const FileCardActions = ({ file }: { file: Doc<"files"> }) => {
   const deleteFile = useMutation(api.files.deleteFile)
   const [deleteAlertOpen, setDeleteAlertOpen] = useState(false)
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false)
   const { toast } = useToast()
   const fileUrl = useQuery(api.files.getFileUrl, {
     fileId: file._id,
