@@ -35,4 +35,11 @@ export default defineSchema({
         eventId: v.id('events'),
         userId: v.id('users'),
     }),
+    comments: defineTable({
+        eventId: v.id("events"),    // 关联事件
+        userId: v.id("users"),      // 评论者
+        parentId: v.optional(v.id("comments")), // 父评论ID，顶级评论为null
+        content: v.string(),        // 评论内容
+        createdAt: v.float64(),       // 创建时间戳
+    }),
 });

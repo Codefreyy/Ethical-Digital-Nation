@@ -38,6 +38,7 @@ import ParticipantsTable from "@/components/ParticipantsTable"
 import { Separator } from "@/components/ui/separator"
 import { debounce } from "lodash"
 import RatingComponent from "@/components/RatingComponent"
+import CommentsSection from "@/components/CommentsSection"
 
 type EventPageProps = {
   params: {
@@ -252,7 +253,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
             />
             <Label htmlFor="date">Date(optional)</Label>
             <Input
-             id="name"
+              id="name"
               type="date"
               value={updatedEvent.date}
               onChange={(e) =>
@@ -262,7 +263,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
             <Label htmlFor="date">Location(optional)</Label>
 
             <Input
-            id="location"
+              id="location"
               value={updatedEvent.location}
               onChange={(e) =>
                 setUpdatedEvent({ ...updatedEvent, location: e.target.value })
@@ -282,7 +283,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
             />
             <Label htmlFor="date">Link(optional)</Label>
             <Input
-               id="link"
+              id="link"
               value={updatedEvent.link}
               onChange={(e) =>
                 setUpdatedEvent({ ...updatedEvent, link: e.target.value })
@@ -294,9 +295,15 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
                 onCheckedChange={(checked) =>
                   setUpdatedEvent({ ...updatedEvent, isContactPublic: checked })
                 }
-                 aria-labelledby="isContactPublic-label"
+                aria-labelledby="isContactPublic-label"
               />
-              <label id="isContactPublic-label" htmlFor="isContactPublic" className="ml-2">Share your contact for this event?</label>
+              <label
+                id="isContactPublic-label"
+                htmlFor="isContactPublic"
+                className="ml-2"
+              >
+                Share your contact for this event?
+              </label>
             </div>
           </>
         ) : (
@@ -304,8 +311,10 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
             {creator && (
               <HoverCard>
                 <HoverCardTrigger asChild tabIndex={0}>
-                  <div className="flex gap-2 items-center underline hover:no-underline underline-offset-2 cursor-pointer"
-                   aria-describedby="creator-info">
+                  <div
+                    className="flex gap-2 items-center underline hover:no-underline underline-offset-2 cursor-pointer"
+                    aria-describedby="creator-info"
+                  >
                     <BadgeInfo className="w-4 h-4" /> Event Creator:{" "}
                     {creator.username || ""}
                   </div>
@@ -349,7 +358,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
                 <a
                   href={link}
                   target="_blank"
-                   rel="noopener noreferrer"
+                  rel="noopener noreferrer"
                   className=" underline underline-offset-2 hover:no-underline"
                 >
                   {" "}
@@ -357,7 +366,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
                 </a>
               </div>
             )}
-            <div >{description}</div>
+            <div>{description}</div>
           </div>
         )}
 
@@ -410,6 +419,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <CommentsSection eventId={eventId} currentUser={currentUser} />
     </div>
   )
 }
