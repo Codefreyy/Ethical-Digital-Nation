@@ -12,6 +12,9 @@ export const createComment = mutation({
     handler: async (ctx, args) => {
         const { eventId, userId, parentId, content } = args;
         console.log('creating comment', eventId, userId, parentId, content)
+        if (!userId) {
+            throw new Error("Unauthorized");
+        }
         // 创建评论
         const commentId = await ctx.db.insert("comments", {
             eventId,

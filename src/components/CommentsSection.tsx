@@ -7,6 +7,7 @@ import { Id } from "../../convex/_generated/dataModel"
 
 import { Separator } from "./ui/separator"
 import Comment from "./Comment"
+import { toast } from "./ui/use-toast"
 
 type CommentSectionProps = {
   eventId: string
@@ -34,22 +35,38 @@ const CommentsSection = ({ eventId, currentUser }: CommentSectionProps) => {
 
   const handleNewComment = async () => {
     if (!newCommentContent.trim()) return
-    await createComment({
-      eventId: eventId as Id<"events">,
-      userId: currentUser._id,
-      content: newCommentContent,
-    })
-    setNewCommentContent("")
+    try {
+      await createComment({
+        eventId: eventId as Id<"events">,
+        userId: currentUser._id,
+        content: newCommentContent,
+      })
+      setNewCommentContent("")
+    } catch (error) {
+      toast({
+        title: "Error",
+        variant: "destructive",
+        description: "Please login to comment",
+      })
+    }
   }
 
   const handleReply = async (parentId: any, content: string) => {
     if (!content.trim()) return
-    await createComment({
-      eventId: eventId as Id<"events">,
-      userId: currentUser._id,
-      parentId,
-      content,
-    })
+    try {
+      await createComment({
+        eventId: eventId as Id<"events">,
+        userId: currentUser._id,
+        parentId,
+        content,
+      })
+    } catch (error) {
+      toast({
+        title: "Error",
+        variant: "destructive",
+        description: "Please login to reply",
+      })
+    }
   }
   const handleDelete = (commentId: string) => {
     setComments((comments ?? []).filter((comment) => comment._id !== commentId))
