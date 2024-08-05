@@ -138,7 +138,7 @@ const Comment = ({
       <p className="mt-2"> {comment.content} </p>
       <div className="flex gap-2">
         <Button
-          className="text-blue-500 p-0"
+          className="text-blue-700 dark:text-blue-300 p-0"
           variant="link"
           onClick={() => setIsReplying(!isReplying)}
         >

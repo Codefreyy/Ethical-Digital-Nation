@@ -5,12 +5,7 @@ import { useQuery, useMutation } from "convex/react"
 import { api } from "../../../convex/_generated/api"
 import EventItem from "@/components/EventItem"
 import { SetStateAction, useEffect, useState } from "react"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from "@/components/ui/select"
+
 import { Input } from "@/components/ui/input"
 import { Search, User } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
@@ -23,43 +18,7 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-
-type SortComponentType = {
-  onSortChange: (value: string) => void
-}
-
-const sortTermDict: Record<string, string> = {
-  createTimeDesc: "Creation Time (New to Old)",
-  createTimeAsc: "Creation Time (Old to New)",
-  startTimeDesc: "Start Time (New to Old)",
-  startTimeAsc: "Start Time (Old to New)",
-} as const
-
-// Sort component
-const Sort = ({ onSortChange }: SortComponentType) => {
-  const handleSortChange = (value: string) => {
-    onSortChange(value)
-    setSortTerm(sortTermDict[value])
-  }
-
-  const [sortTerm, setSortTerm] = useState("Creation Time (New to Old)")
-
-  return (
-    <Select onValueChange={handleSortChange}>
-      <SelectTrigger>{sortTerm}</SelectTrigger>
-      <SelectContent>
-        <SelectItem value="createTimeDesc">
-          Creation Time (New to Old)
-        </SelectItem>
-        <SelectItem value="createTimeAsc">
-          Creation Time (Old to New)
-        </SelectItem>
-        <SelectItem value="startTimeDesc">Start Time (New to Old)</SelectItem>
-        <SelectItem value="startTimeAsc">Start Time (Old to New)</SelectItem>
-      </SelectContent>
-    </Select>
-  )
-}
+import Sort from "@/components/Sort"
 
 export default function Events() {
   const events = useQuery(api.events.getEvents)
@@ -147,7 +106,7 @@ export default function Events() {
 
       <section aria-labelledby="events-section">
         <div className="flex justify-between items-center mb-8">
-          <h3 className="text-2xl font-semibold">Events</h3>
+          <h2 className="text-2xl font-semibold">Events</h2>
           <EventCreator />
         </div>
         <div className="flex flex-col justify-items-start sm:flex-row sm:gap-5 sm:justify-between sm:items-center mb-8 gap-2">

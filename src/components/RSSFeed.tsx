@@ -45,10 +45,10 @@ export default async function RSSFeed() {
     <>
       <div className="flex items-center gap-1 mb-3">
         {" "}
-        <h3 className="text-2xl font-semibold">RSS Feed</h3>
+        <h2 className="text-2xl font-semibold">Latest Digital Updates</h2>
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger tabIndex={-1}>
+            <TooltipTrigger tabIndex={-1} aria-label="infomation-popover">
               {" "}
               <Info className="w-4 h-4" />
             </TooltipTrigger>

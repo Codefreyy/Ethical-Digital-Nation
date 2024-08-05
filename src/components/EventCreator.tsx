@@ -31,6 +31,7 @@ import { Textarea } from "./ui/textarea"
 import { api } from "../../convex/_generated/api"
 import { toast } from "./ui/use-toast"
 import { Switch } from "./ui/switch"
+import TagInput from "./TagInput"
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -84,19 +85,22 @@ export const EventCreator = () => {
   return (
     <Dialog open={isCreateEventOpen} onOpenChange={setIsCreateEventOpen}>
       <DialogTrigger asChild>
-        {isAuthenticated && (
-          <Button
-            onClick={() => {
-              if (!isAuthenticated) {
-                return
-              }
+        <Button
+          onClick={() => {
+            if (!isAuthenticated) {
+              toast({
+                title: "Sign in required",
+                description: "You need to sign in to create an event.",
+                duration: 3000,
+              })
+            } else {
               setIsCreateEventOpen(true)
-            }}
-          >
-            <PencilLine className="w-4 h-4 mr-2" />
-            Create Event
-          </Button>
-        )}
+            }
+          }}
+        >
+          <PencilLine className="w-4 h-4 mr-2" />
+          Create Event
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -190,7 +194,7 @@ export const EventCreator = () => {
                     </FormItem>
                   )}
                 />
-
+                <TagInput />
                 <Button
                   type="submit"
                   disabled={form.formState.isSubmitting}

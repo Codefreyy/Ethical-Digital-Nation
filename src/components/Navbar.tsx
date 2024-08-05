@@ -42,7 +42,7 @@ export const Navbar = () => {
     >
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <Link href="/">
+          <Link href="/" aria-label="homepage">
             <TreePalm className="w-6 h-6" />
           </Link>
           <Link href="/" className="font-medium text-lg hidden sm:block ">
@@ -91,22 +91,24 @@ export const Navbar = () => {
                   </DropdownMenuItem>
                 </SignedIn>
                 <DropdownMenuItem asChild>
-                <DarkModeToggle />
+                  <DarkModeToggle />
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
           <div className="hidden sm:flex items-center gap-4">
-            <Link href="/events" className="hover:underline">
+            <Link href="/events" className="hover:underline" tabIndex={0}>
               Events
             </Link>
             <SignedOut>
               <SignInButton>
-                <Button aria-label="Sign In">Sign In</Button>
+                <Button aria-label="Sign In" tabIndex={0}>
+                  Sign In
+                </Button>
               </SignInButton>
             </SignedOut>
             <SignedIn>
-              <Link className="hover:underline" href="/profile">
+              <Link className="hover:underline" href="/profile" tabIndex={0}>
                 Profile
               </Link>
               <UserButton aria-label="User Menu" />

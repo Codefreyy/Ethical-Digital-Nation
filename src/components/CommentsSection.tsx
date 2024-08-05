@@ -74,7 +74,7 @@ const CommentsSection = ({ eventId, currentUser }: CommentSectionProps) => {
 
   return (
     <div className="comments-section mt-8">
-      <h3 className="font-semibold mb-2">Comments</h3>
+      <h2 className="font-semibold mb-2">Comments</h2>
 
       <div className="new-comment flex flex-col gap-2 justify-end items-start">
         <Textarea

@@ -7,6 +7,7 @@ const DarkModeToggle = forwardRef<HTMLButtonElement>((props, ref) => {
   console.log("theme", theme)
   return (
     <button
+      aria-label="Toggle dark mode"
       tabIndex={0}
       ref={ref} // Use the forwarded ref here
       className="dark:text-slate-500 cursor-pointer"
