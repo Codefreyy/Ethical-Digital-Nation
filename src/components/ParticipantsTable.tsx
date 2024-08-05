@@ -219,15 +219,7 @@ const ParticipantsTable = ({
           <div className="mt-4">
             <h3 className="font-bold">Preview:</h3>
             <div
-              style={{
-                border: "1px solid #dedede",
-                padding: "16px",
-                borderRadius: "5px",
-                maxHeight: "300px",
-                overflowY: "auto",
-                marginTop: "12px",
-                backgroundColor: "#ffffff",
-              }}
+              className="border border-gray-300 p-4 rounded max-h-[300px] overflow-y-auto mt-3 "
               dangerouslySetInnerHTML={{ __html: emailHtml }} // Render the HTML
             />
           </div>

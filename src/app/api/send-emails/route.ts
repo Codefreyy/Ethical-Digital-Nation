@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     console.log('request', request);
     try {
         const { to, from, subject, text, replyTo } = await request.json();
-        console.log('to', to, 'from', from, 'subject', subject, 'html', text);
+        console.log('to', to, 'from', from, 'subject', subject, 'html', text, 'replyTo', replyTo);
 
         // 发送邮件
         const response = await resend.emails.send({

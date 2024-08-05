@@ -207,7 +207,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
           {name}
         </h1>
         {!isCreator && (
-          <Button variant="secondary" onClick={handleToggleInterest}>
+          <Button variant="outline" className="border border-gray-900 dark:border-gray-200" onClick={handleToggleInterest}>
             {hasJoined ? "Cancel Interest" : "Show Interest"}
           </Button>
         )}
