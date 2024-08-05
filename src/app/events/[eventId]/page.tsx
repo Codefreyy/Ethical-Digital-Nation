@@ -371,7 +371,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
         )}
 
         <div className="flex justify-between items-center mb-2 ">
-          <div className="flex flex-col text-gray-500">
+          <div className="flex flex-col text-gray-500 dark:text-gray-200">
             <span className="font-semibold">
               Credability: {generalRating?.averageRating} / 5
             </span>

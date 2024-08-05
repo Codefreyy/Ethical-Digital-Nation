@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/use-toast"
+import { roleMapping } from "@/lib/const"
 
 const Profile = () => {
   const { user, isLoaded } = useUser()
@@ -159,7 +160,7 @@ const Profile = () => {
           </div>
           <div className="mb-4">
             <Label className="font-semibold">Role:</Label>
-            <p>{role}</p>
+            <p>{roleMapping[role]}</p>
           </div>
           <div className="mb-4">
             <Label className="font-semibold">Organization:</Label>

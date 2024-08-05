@@ -17,6 +17,7 @@ import {
 import { Textarea } from "./ui/textarea"
 import ParticipantsEmail from "./email-template"
 import { Input } from "./ui/input"
+import { roleMapping } from "@/lib/const"
 
 type Participant = {
   _id: string & {
@@ -167,7 +168,16 @@ const ParticipantsTable = ({
     { id: "username", header: "Username", accessorKey: "username" },
     { id: "email", header: "Email", accessorKey: "email" },
     { id: "organization", header: "Organization", accessorKey: "organization" },
-    { id: "role", header: "Role", accessorKey: "role" },
+    {
+      id: "role",
+      header: "Role",
+      accessorKey: "role",
+      cell: ({ row }) => (
+        <span>
+          {row?.original?.role ? roleMapping[row.original?.role] : ""}
+        </span>
+      ),
+    },
     {
       id: "researchInterests",
       header: "Research Interests",
