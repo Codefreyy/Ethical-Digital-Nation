@@ -207,7 +207,11 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
           {name}
         </h1>
         {!isCreator && (
-          <Button variant="outline" className="border border-gray-900 dark:border-gray-200" onClick={handleToggleInterest}>
+          <Button
+            variant="outline"
+            className="border border-gray-900 dark:border-gray-200"
+            onClick={handleToggleInterest}
+          >
             {hasJoined ? "Cancel Interest" : "Show Interest"}
           </Button>
         )}
@@ -373,7 +377,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
         <div className="flex justify-between items-center mb-2 ">
           <div className="flex flex-col text-gray-500 dark:text-gray-200">
             <span className="font-semibold">
-              Credability: {generalRating?.averageRating} / 5
+              Credibility: {generalRating?.averageRating} / 5
             </span>
             <div className="flex gap-3">
               <Users className="w-5 h-5" />

@@ -194,7 +194,7 @@ export const EventCreator = () => {
                     </FormItem>
                   )}
                 />
-                <TagInput />
+                {/* <TagInput /> */}
                 <Button
                   type="submit"
                   disabled={form.formState.isSubmitting}

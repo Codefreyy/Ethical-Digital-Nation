@@ -120,7 +120,7 @@ export default function Events() {
               placeholder="Search events by name"
               value={searchTerm}
               onChange={handleSearchChange}
-              className="border p-2 relative z-10"
+              className="border p-2 relative z-10 w-full sm:w-96"
               aria-label="Search events by name"
             />
             <Search
