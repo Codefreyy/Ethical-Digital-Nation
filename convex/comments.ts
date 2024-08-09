@@ -11,7 +11,6 @@ export const createComment = mutation({
     },
     handler: async (ctx, args) => {
         const { eventId, userId, parentId, content } = args;
-        console.log('creating comment', eventId, userId, parentId, content)
         if (!userId) {
             throw new Error("Unauthorized");
         }
@@ -94,8 +93,6 @@ export const getComments = query({
                 replies: await getReplies(comment._id),
             }))
         );
-
-        console.log('all comments with user data', res);
 
         return res;
     },

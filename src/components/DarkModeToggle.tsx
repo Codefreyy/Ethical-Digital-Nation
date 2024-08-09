@@ -4,7 +4,6 @@ import { useTheme } from "@/contexts/themeContext"
 
 const DarkModeToggle = forwardRef<HTMLButtonElement>((props, ref) => {
   const { theme, toggleTheme } = useTheme()
-  console.log("theme", theme)
   return (
     <button
       aria-label="Toggle dark mode"
@@ -14,13 +13,6 @@ const DarkModeToggle = forwardRef<HTMLButtonElement>((props, ref) => {
       onClick={() => {
         toggleTheme()
       }}
-      // onKeyDown={(e) => {
-      //   e.stopPropagation()
-      //   console.log("keydown", e.key)
-      //   if (e.key === "Enter") {
-      //     toggleTheme() // when the button is clicked, toggle the dark mode state
-      //   }
-      // }}
       {...props} // Spread any additional props (important for asChild)
     >
       {theme == "dark" ? (

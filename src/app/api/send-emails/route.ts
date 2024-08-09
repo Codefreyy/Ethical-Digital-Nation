@@ -6,10 +6,8 @@ import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
-    console.log('request', request);
     try {
         const { to, from, subject, text, replyTo } = await request.json();
-        console.log('to', to, 'from', from, 'subject', subject, 'html', text, 'replyTo', replyTo);
 
         const response = await resend.emails.send({
             reply_to: replyTo,

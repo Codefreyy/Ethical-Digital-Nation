@@ -20,10 +20,8 @@ const CommentsSection = ({ eventId, currentUser }: CommentSectionProps) => {
   const queryComment = useQuery(api.comments.getComments, {
     eventId: eventId as Id<"events">,
   })
-  console.log("queryComment", queryComment)
   const [comments, setComments] = useState<any[]>([])
 
-  console.log("comments", comments)
   useEffect(() => {
     if (queryComment) {
       setComments(queryComment)
