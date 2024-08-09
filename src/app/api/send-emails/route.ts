@@ -1,8 +1,8 @@
-import GithubAccessTokenEmail, { ParticipantsEmail } from '@/components/email-template';
+import { ParticipantsEmail } from '@/components/email-template';
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
-// 从环境变量中获取 Resend API 密钥
+// get the Resend API key from the environment
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
@@ -11,11 +11,10 @@ export async function POST(request: Request) {
         const { to, from, subject, text, replyTo } = await request.json();
         console.log('to', to, 'from', from, 'subject', subject, 'html', text, 'replyTo', replyTo);
 
-        // 发送邮件
         const response = await resend.emails.send({
             reply_to: replyTo,
             from,
-            to, // 这里 to 是一个包含多个收件人的数组
+            to, // to is an array contains multiple email addresses
             subject,
             react: ParticipantsEmail({ subject, content: text }),
 

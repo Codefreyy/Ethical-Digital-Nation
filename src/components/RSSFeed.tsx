@@ -1,5 +1,4 @@
 import Parser from "rss-parser"
-import { Popover } from "@/components/ui/popover"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Tooltip,
