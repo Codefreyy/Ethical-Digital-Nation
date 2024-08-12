@@ -40,9 +40,11 @@ export type Participants = Participant[]
 const ParticipantsTable = ({
   participants,
   creatorEmail,
+  eventId,
 }: {
   participants: any | Participants
   creatorEmail: string | undefined
+  eventId: string
 }) => {
   const [selectedRows, setSelectedRows] = useState<string[]>([])
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -50,7 +52,10 @@ const ParticipantsTable = ({
   const [emailSubject, setEmailSubject] = useState("")
   const { toast } = useToast()
   const emailHtml = ReactDOMServer.renderToStaticMarkup(
-    <ParticipantsEmail subject={emailSubject} content={emailContent} />
+    <ParticipantsEmail
+      eventUrl={`https://ethical-digital-nation.vercel.app/events/${eventId}`}
+      content={emailContent}
+    />
   )
   const sendEmailButtonRef = useRef<HTMLButtonElement | null>(null)
 
@@ -96,7 +101,8 @@ const ParticipantsTable = ({
           replyTo: creatorEmail,
           subject: emailSubject,
           text: emailContent,
-          from: "onboarding@resend.dev", // TODO: change to verified email address later
+          eventUrl: `https://ethical-digital-nation.vercel.app/events/${eventId}`,
+          from: "ethical-digital-nation@joy-yujiepeng.xyz", // TODO: change to verified email address later
         }),
       })
       return response.json()
@@ -219,8 +225,9 @@ const ParticipantsTable = ({
           <div className="mt-4">
             <h3 className="font-bold">Preview:</h3>
             <div
-              className="border border-gray-300 p-4 rounded max-h-[300px] overflow-y-auto mt-3 "
-              dangerouslySetInnerHTML={{ __html: emailHtml }} // Render the HTML
+              className="border border-gray-300 p-4 rounded max-h-[300px] overflow-y-auto mt-3 text-sm"
+              dangerouslySetInnerHTML={{ __html: emailHtml }}
+              style={{ whiteSpace: "normal" }} // 使HTML内容正常渲染
             />
           </div>
           <DialogFooter>

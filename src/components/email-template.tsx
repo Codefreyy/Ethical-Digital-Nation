@@ -8,14 +8,15 @@ import {
   Section,
   Text,
 } from "@react-email/components"
+
 import * as React from "react"
 
 export const ParticipantsEmail = ({
-  subject,
   content,
+  eventUrl,
 }: {
-  subject: string
   content: string
+  eventUrl: string
 }) => (
   <Html>
     <Head />
@@ -24,18 +25,34 @@ export const ParticipantsEmail = ({
     </Preview> */}
     <Body style={main}>
       <Container style={container}>
-        <Text style={title}>{subject}</Text>
-
         <Section style={section}>
-          <Text style={text}>{content}</Text>
+          <Text style={text}>
+            {" "}
+            <p>
+              {content.split("\n").map((line, index) => (
+                <React.Fragment key={index}>
+                  {line}
+                  <br />
+                </React.Fragment>
+              ))}
+            </p>
+          </Text>
         </Section>
 
         <Text style={footer}>
-          From{" "}
+          You received this email because you showed interest in{" "}
+          <a
+            href={eventUrl}
+            target="_blank"
+            className="underline hover:no-underline"
+          >
+            this event
+          </a>{" "}
+          from{" "}
           <a
             className="underline hover:no-underline"
             target="_blank"
-            href="https://joy-clerk-auth.vercel.app/ "
+            href="https://ethical-digital-nation.vercel.app/"
           >
             Ethical Digital Nation Collaborative Web App
           </a>
@@ -60,16 +77,10 @@ const container = {
   padding: "20px 0 48px",
 }
 
-const title = {
-  fontSize: "24px",
-  lineHeight: 1.25,
-}
-
 const section = {
-  padding: "24px",
-  border: "solid 1px #dedede",
-  borderRadius: "5px",
-  textAlign: "center" as const,
+  padding: "12px",
+  borderRadius: "4px",
+  textAlign: "left" as const,
 }
 
 const text = {
@@ -80,7 +91,7 @@ const text = {
 
 const footer = {
   color: "#6a737d",
-  fontSize: "12px",
+  fontSize: "10px",
   textAlign: "center" as const,
   marginTop: "60px",
 }

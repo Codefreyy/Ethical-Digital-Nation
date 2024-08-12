@@ -32,7 +32,11 @@ const CommentsSection = ({ eventId, currentUser }: CommentSectionProps) => {
   const createComment = useMutation(api.comments.createComment)
 
   const handleNewComment = async () => {
-    if (!newCommentContent.trim()) return
+    if (!newCommentContent.trim()) {
+      return toast({
+        description: "Comment content is required",
+      })
+    }
     try {
       await createComment({
         eventId: eventId as Id<"events">,

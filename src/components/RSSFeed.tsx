@@ -39,6 +39,12 @@ async function fetchRSSFeed() {
 
 export default async function RSSFeed() {
   const items = await fetchRSSFeed()
+  if (!items)
+    return (
+      <div>
+        <p>No updates available.</p>
+      </div>
+    )
 
   return (
     <>

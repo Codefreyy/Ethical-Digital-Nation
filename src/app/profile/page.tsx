@@ -51,6 +51,15 @@ const Profile = () => {
   }, [isLoaded, user, currentUser])
 
   const handleSave = async () => {
+    if (!username || !username.trim()) {
+      toast({
+        title: "Error",
+        description: "Username is required",
+        variant: "destructive",
+        duration: 2000,
+      })
+      return
+    }
     const res = await updateUserProfile({
       username,
       role,

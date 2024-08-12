@@ -400,6 +400,7 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
             <ParticipantsTable
               participants={participants}
               creatorEmail={currentUserEmail}
+              eventId={eventId}
             />
           </>
         )}
