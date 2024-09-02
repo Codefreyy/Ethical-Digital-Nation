@@ -21,6 +21,7 @@ const CommentsSection = ({ eventId, currentUser }: CommentSectionProps) => {
     eventId: eventId as Id<"events">,
   })
   const [comments, setComments] = useState<any[]>([])
+  console.log("comments", comments)
 
   useEffect(() => {
     if (queryComment) {

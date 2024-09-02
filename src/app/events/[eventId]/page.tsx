@@ -110,6 +110,8 @@ export default function EventPage({ params: { eventId } }: EventPageProps) {
     creator,
   } = event as unknown as EventDetail
 
+  console.log("creator", creator)
+
   const handleToggleInterest = debounce(async () => {
     try {
       const result = await toggleInterest({ eventId: eventId as Id<"events"> })

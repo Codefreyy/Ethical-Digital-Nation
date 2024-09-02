@@ -21,16 +21,16 @@ const RatingComponent = ({
   const submitRating = useMutation(api.ratings.submitRating)
 
   // Fetch user's rating on component mount
-  const userRatingQuery = useQuery(api.ratings.getUserRating, {
+  const userRatingsRes = useQuery(api.ratings.getUserRating, {
     eventId,
     userId,
   })
 
   useEffect(() => {
-    if (userRatingQuery?.rating) {
-      setUserRating(userRatingQuery.rating)
+    if (userRatingsRes?.rating) {
+      setUserRating(userRatingsRes.rating)
     }
-  }, [userRatingQuery])
+  }, [userRatingsRes])
 
   const handleRatingSubmit = async (ratingValue: number) => {
     try {
@@ -61,8 +61,8 @@ const RatingComponent = ({
   }
 
   const handleKeyDown = (event: React.KeyboardEvent, ratingValue: number) => {
-    if (event.key === 'Enter') {
-      handleRatingSubmit(ratingValue);
+    if (event.key === "Enter") {
+      handleRatingSubmit(ratingValue)
     }
   }
   return (

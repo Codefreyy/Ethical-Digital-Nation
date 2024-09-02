@@ -35,7 +35,7 @@ export const getComments = query({
     handler: async (ctx, args) => {
         const { eventId } = args;
 
-        // 获取顶级评论
+        // get top level comments
         const topLevelComments = await ctx.db
             .query("comments")
             .filter((q) => q.eq(q.field("eventId"), eventId))
@@ -45,11 +45,11 @@ export const getComments = query({
             ))
             .collect();
 
-        // 获取所有相关用户的信息
+        // get all related user information
         const userIds = topLevelComments.map(comment => comment.userId);
         const users = await Promise.all(userIds.map(userId => ctx.db.get(userId)));
 
-        // 构建用户信息字典
+        // construct user information dictionary
         const userDict: Record<string, typeof users[0]> = users.reduce((dict, user) => {
             if (user !== null) {
                 dict[user._id] = user;
@@ -57,25 +57,25 @@ export const getComments = query({
             return dict;
         }, {} as Record<string, typeof users[0]>);
 
-        // 递归获取子评论
+        // get replies of a comment
         const getReplies = async (commentId: GenericId<"comments">): Promise<any> => {
             const replies = await ctx.db
                 .query("comments")
                 .filter((q) => q.eq(q.field("parentId"), commentId))
                 .collect();
 
-            // 获取子评论的用户信息
+            // get all related user information
             const replyUserIds = replies.map(reply => reply.userId);
             const replyUsers = await Promise.all(replyUserIds.map(userId => ctx.db.get(userId)));
 
-            // 构建子评论的用户信息字典
+            // build user information dictionary
             replyUsers.forEach(user => {
                 if (user !== null) {
                     userDict[user._id] = user;
                 }
             });
 
-            // 递归查询子评论的子评论
+            // recursively get replies of replies
             return await Promise.all(
                 replies.map(async (reply) => ({
                     ...reply,
@@ -85,7 +85,7 @@ export const getComments = query({
             );
         };
 
-        // 组装评论结构，并附加用户信息
+        // get replies of top level comments
         const res = await Promise.all(
             topLevelComments.map(async (comment) => ({
                 ...comment,

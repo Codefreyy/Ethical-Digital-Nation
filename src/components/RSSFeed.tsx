@@ -33,7 +33,9 @@ export function RSSFeedItem({ item }: { item: any }) {
 
 async function fetchRSSFeed() {
   const parser = new Parser()
-  const feed = await parser.parseURL("https://blogs.gov.scot/digital/feed/")
+  const feed = await parser.parseURL(
+    "https://blogs.gov.scot/digital/feed/?t=${new Date().getTime()}"
+  )
   return feed.items
 }
 
